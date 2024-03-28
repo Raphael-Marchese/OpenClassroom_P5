@@ -1,0 +1,51 @@
+@startuml
+participant Admin as Admin
+participant Système as System
+database BDD as BDD
+participant Visiteur as Visiteur
+
+Admin -> System: Demande de connexion
+System -> BDD: Demande validation connexion
+
+alt Connexion validée
+BDD --> System: Connexion validée
+System --> Admin: Affiche succès de la connexion
+else Connexion refusée
+BDD --> System: Connexion refusée
+System --> Admin: Envoie un message d'erreur
+end
+
+Admin -> System: Demande l'accès à la page d'ajout d'article
+System --> Admin: Affiche la page d'ajout d'article
+Admin -> System: Crée et soumet un article
+System -> BDD: Enregistre les éléments de l'article
+BDD --> System: Elements enregistrés
+System --> Admin: Affiche la page du nouvel article
+
+Admin -> System: Demande l'accès à la page de modification d'article
+System --> Admin: Affiche la page de modification d'article
+Admin -> System: Modifie et soumet l'article
+System -> BDD: Enregistre les éléments de l'article
+BDD --> System: Elements enregistrés
+System --> Admin: Affiche la page de l'article modifié
+
+Admin -> System: Demande l'accès à la page de suppression d'article
+System --> Admin: Affiche la page de suppression d'article
+Admin -> System: Supprime l'article
+System -> BDD: Supprime les éléments de l'article
+BDD --> System: Elements supprimés
+System --> Admin: Affiche un message de succès de suppression
+
+Visiteur -> System: Soumet un commentaire
+System -> Admin: Demande validation du commentaire
+Admin -> System: Demande l'accès à la page de modération des commentaires
+System --> Admin: Affiche la page de modération des commentaires
+    alt Commentaire validé
+    Admin --> System: Commentaire validé
+    System -> BDD: Enregistre le commentaire
+    System --> Visiteur: Affiche le commentaire
+    else Commentaire refusé
+    Admin --> System: Commentaire refusé
+    System --> Visiteur: Envoie un message d'erreur
+    end
+@enduml

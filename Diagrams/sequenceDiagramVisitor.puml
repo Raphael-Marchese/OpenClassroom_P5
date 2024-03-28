@@ -1,0 +1,87 @@
+@startuml
+participant Visiteur as Visiteur
+participant Système as System
+database BDD as BDD
+participant Admin as Admin
+
+Visiteur -> System: Demande l'accès à la page d'accueil
+System --> Visiteur: Affiche la page d'accueil
+Visiteur -> System: Demande l'accès à la page liste des articles
+System --> Visiteur: Affiche la liste des articles
+Visiteur -> System: Demande l'accès à une page d'article
+System --> Visiteur: Affiche la page de l'article
+
+Visiteur -> System: Commente l'article
+alt Utilisateur inscrit et connecté
+    System -> Admin: Demande validation du commentaire
+
+    alt Commentaire validé
+    Admin --> System: Commentaire validé
+    System -> BDD: Enregistre le commentaire
+    System --> Visiteur: Affiche le commentaire
+    else Commentaire refusé
+    Admin --> System: Commentaire refusé
+    System --> Visiteur: Envoie un message d'erreur
+    end
+
+else Utilisateur non connecté
+
+    alt Utilisateur inscrit
+    Visiteur -> System: Demande de connexion
+    System -> BDD: Demande validation connexion
+
+        alt Connexion validée
+        BDD --> System: Connexion validée
+        System --> Visiteur: Affiche succès de la connexion
+            System -> Admin: Demande validation du commentaire
+
+                alt Commentaire validé
+                Admin --> System: Commentaire validé
+                System -> BDD: Enregistre le commentaire
+                System --> Visiteur: Affiche le commentaire
+                else Commentaire refusé
+                Admin --> System: Commentaire refusé
+                System --> Visiteur: Envoie un message d'erreur
+                end
+
+        else Connexion refusée
+        BDD --> System: Connexion refusée
+        System --> Visiteur: Envoie un message d'erreur
+        end
+
+    else Utilisateur non inscrit
+        Visiteur -> System: Demande d'inscription
+        System -> BDD: Demande validation d'inscription
+                alt inscription validée
+                BDD --> System: inscription validée
+                System --> Visiteur: Affiche succès de l'inscription'
+                System -> BDD: Enregistre le nouvel utilisateur
+                System --> Visiteur: Affiche succès de l'inscription
+                        alt Connexion validée
+                        BDD --> System: Connexion validée
+                        System --> Visiteur: Affiche succès de la connexion
+                            System -> Admin: Demande validation du commentaire
+
+                                alt Commentaire validé
+                                Admin --> System: Commentaire validé
+                                System -> BDD: Enregistre le commentaire
+                                System --> Visiteur: Affiche le commentaire
+                                else Commentaire refusé
+                                Admin --> System: Commentaire refusé
+                                System --> Visiteur: Envoie un message d'erreur
+                                end
+                        else Connexion refusée
+                        BDD --> System: Connexion refusée
+                        System --> Visiteur: Envoie un message d'erreur
+                        end
+                else inscription refusée
+                BDD --> System: Connexion refusée
+                System --> Visiteur: Envoie un message d'erreur
+                end
+    end
+
+end
+
+
+
+@enduml
