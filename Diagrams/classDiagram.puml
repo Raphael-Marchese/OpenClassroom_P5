@@ -1,4 +1,38 @@
 @startuml
-class user
-class visitor
+class User {
+firstName : String
+lastName : String
+username : String
+email : String
+password : String
+role : Enum
+}
+class Visitor
+class Administrator
+enum Role <<Enumeration>> {
+ROLE_USER
+ROLE_ADMIN
+}
+class BlogPost {
+title : String
+chapô : String
+createdAt : DateTime
+updatedAt : DateTime
+content : String
+}
+class Comment {
+content : String
+createdAt : DateTime
+updatedAt : DateTime
+}
+
+User <|-- Visitor
+User <|-- Administrator
+User <.. Role
+Administrator "1" - "0..*" Visitor : Approve
+Administrator "1" -- "0..*" BlogPost : publish
+Administrator "1" -- "0..*" Comment : Validate
+Visitor "1" -- "0..*" Comment : Submit
+BlogPost "1" *-- "0..*" Comment
+
 @enduml
