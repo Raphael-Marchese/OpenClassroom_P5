@@ -11,18 +11,19 @@ CREATE TABLE `user` (
 CREATE TABLE `blog_post` (
                              `id` integer AUTO_INCREMENT PRIMARY KEY,
                              `title` varchar(255),
-                             `chapô` varchar(255),
-                             `createdAt` dateTime,
-                             `updatedAt` dateTime,
+                             `chapo` varchar(255),
+                             `created_at` dateTime,
+                             `updated_at` dateTime,
                              `content` varchar(255),
+                             `visible` boolean,
                              `author` integer
 );
 
 CREATE TABLE `comment` (
                            `id` integer AUTO_INCREMENT PRIMARY KEY,
                            `content` varchar(255),
-                           `createdAt` dateTime,
-                           `updatedAt` datetime,
+                           `created_at` dateTime,
+                           `updated_at` datetime,
                            `author` integer,
                            `post` integer
 );
