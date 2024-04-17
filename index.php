@@ -21,3 +21,4 @@ $path = $_SERVER['REQUEST_URI'];
 // Instanciation du routeur et traitement de la requête
 $router = new Router();
 $router->callController($path);
+

@@ -2,11 +2,20 @@
 
 namespace App\controllers;
 
-class Homepage
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
+
+class Homepage extends Controller
 {
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
     public function render():void
     {
-        echo "Hello World";
+       echo $this->twig->render('homepage/homepage.html.twig');
     }
 
 }
