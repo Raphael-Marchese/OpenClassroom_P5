@@ -14,14 +14,14 @@ CREATE TABLE `blog_post` (
                              `chapo` varchar(255),
                              `created_at` dateTime,
                              `updated_at` dateTime,
-                             `content` varchar(255),
-                             `visible` boolean,
+                             `content` text,
+                             `status` ENUM ('draft', 'pending', 'published'),
                              `author` integer
 );
 
 CREATE TABLE `comment` (
                            `id` integer AUTO_INCREMENT PRIMARY KEY,
-                           `content` varchar(255),
+                           `content` text,
                            `created_at` dateTime,
                            `updated_at` datetime,
                            `author` integer,
