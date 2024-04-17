@@ -14,5 +14,4 @@ abstract class Controller
         $loader = new FilesystemLoader('src/views');
         $this->twig = new Environment($loader);
     }
-
 }
