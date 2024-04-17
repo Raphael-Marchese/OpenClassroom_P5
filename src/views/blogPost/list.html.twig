@@ -1,0 +1,12 @@
+{% extends 'layout.html.twig' %}
+
+{% block body %}
+
+    {% for post in blogPosts %}
+
+    <h1>{{post.title}}</h1>
+    <p>{{ post.chapo }}</p>
+
+    {% endfor %}
+
+{% endblock %}
