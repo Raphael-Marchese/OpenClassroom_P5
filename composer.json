@@ -1,0 +1,19 @@
+{
+    "name": "raphael/blog",
+    "description": "professional blog made to discover php",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Raphael Marchese",
+            "email": "marchese.raphael@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "twig/twig": "^3.9"
+    }
+}
