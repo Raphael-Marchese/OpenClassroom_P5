@@ -5,10 +5,12 @@ namespace App\controllers;
 
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
+use App\Model\Database;
 
 abstract class Controller
 {
     protected Environment $twig;
+
     public function __construct()
     {
         $loader = new FilesystemLoader('src/views');
