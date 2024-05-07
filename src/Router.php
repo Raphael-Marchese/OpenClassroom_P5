@@ -2,9 +2,9 @@
 
 namespace App;
 
-use App\controllers\BlogPostList;
-use App\controllers\Homepage;
-use App\model\BlogPostRepository;
+use App\controllers\PostListController;
+use App\controllers\HomeController;
+use App\model\PostRepository;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -16,8 +16,8 @@ class Router
     public function __construct()
     {
         $this->routes = [
-            '/' => Homepage::class,
-            '/list' => BlogPostList::class,
+            '/' => HomeController::class,
+            '/list' => PostListController::class,
             '/404' => Error404::class,
         ];
     }
@@ -31,12 +31,12 @@ class Router
     {
         $class = $this->routes[$path] ?? $this->routes['/404'];
 
-        /** @var Homepage | BlogPostList $controller */
+        /** @var HomeController | PostListController $controller */
         $controller = new $class();
-        if($controller instanceof Homepage){
+        if($controller instanceof HomeController){
             $controller->render();
         } else {
-            $repository = new BlogPostRepository();
+            $repository = new PostRepository();
             $controller->render($repository);
         }
     }

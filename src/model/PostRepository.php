@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\model;
 
-class BlogPostRepository extends Database
+class PostRepository extends Database
 {
     public function findAll(): bool|\PDOStatement
     {

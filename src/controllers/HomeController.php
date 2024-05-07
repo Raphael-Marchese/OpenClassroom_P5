@@ -6,7 +6,7 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
-class Homepage extends Controller
+class HomeController extends Controller
 {
     /**
      * @throws SyntaxError
@@ -17,5 +17,4 @@ class Homepage extends Controller
     {
        echo $this->twig->render('homepage/homepage.html.twig');
     }
-
 }
