@@ -5,7 +5,7 @@ namespace App\entity;
 
 class BlogPost
 {
-    private $id;
+    private int $id;
     private string $title;
     private string $chapo;
     private \DateTimeInterface $createdAt;
