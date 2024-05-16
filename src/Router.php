@@ -4,7 +4,6 @@ namespace App;
 
 use App\controllers\PostController;
 use App\controllers\HomeController;
-use ReflectionMethod;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
