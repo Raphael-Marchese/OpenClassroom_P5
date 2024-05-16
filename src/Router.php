@@ -2,9 +2,9 @@
 
 namespace App;
 
-use App\controllers\PostListController;
+use App\controllers\PostController;
 use App\controllers\HomeController;
-use App\model\PostRepository;
+use ReflectionMethod;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -16,8 +16,9 @@ class Router
     public function __construct()
     {
         $this->routes = [
-            '/' => HomeController::class,
-            '/list' => PostListController::class,
+            '/' => [HomeController::class, 'render'], // Route pour /
+            '/list' => [PostController::class, 'getCollection'], // Route pour /list
+            '/post/(\d+)' => [PostController::class, 'getPost'], // Route pour /post/id
             '/404' => Error404::class,
         ];
     }
@@ -26,18 +27,30 @@ class Router
      * @throws SyntaxError
      * @throws RuntimeError
      * @throws LoaderError
+     * @throws \ReflectionException
      */
     public function callController(string $path): void
     {
-        $class = $this->routes[$path] ?? $this->routes['/404'];
+        foreach($this->routes as $route => $controller) {
+            if ($path === $route) {
 
-        /** @var HomeController | PostListController $controller */
-        $controller = new $class();
-        if($controller instanceof HomeController){
-            $controller->render();
-        } else {
-            $repository = new PostRepository();
-            $controller->render($repository);
+                $controllerClass =  $controller[0];
+                $method = $controller[1];
+                $controllerInstance = new $controllerClass();
+                $controllerInstance->$method();
+                return;
+            }
+
+            if (preg_match('#^' . $route . '$#', $path, $matches)) {
+                $controllerClass = $controller[0];
+                $method = $controller[1];
+                $controllerInstance = new $controllerClass();
+                $pathId = (int) $matches[1];
+                $controllerInstance->$method($pathId);
+                return;
+            }
         }
+        $error404Controller = new Error404();
+        $error404Controller->render();
     }
 }
