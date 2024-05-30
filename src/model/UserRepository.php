@@ -21,15 +21,11 @@ class UserRepository extends Database
         $statement->bindValue(':username', $username, type: PDO::PARAM_STR);
         $statement->bindValue(':password', $password, type: PDO::PARAM_STR);
         $statement->bindValue(':email', $email, type: PDO::PARAM_STR);
-        if (null !== $firstName) {
-            $statement->bindValue(':firstName', $firstName, type: PDO::PARAM_STR);
-        }
-        if (null !== $lastName) {
-            $statement->bindValue(':lastName', $lastName, type: PDO::PARAM_STR);
-        }
+        $statement->bindValue(':firstName', $firstName, type: PDO::PARAM_STR);
+        $statement->bindValue(':lastName', $lastName, type: PDO::PARAM_STR);
+
 
         if ($statement->execute()) {
-            echo 'ok';
             return true;
         } else {
             // Vous pouvez enregistrer les erreurs dans un fichier log ou gérer les erreurs de manière appropriée

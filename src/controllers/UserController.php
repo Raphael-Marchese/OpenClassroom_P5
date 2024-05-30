@@ -40,6 +40,10 @@ class UserController extends Controller
             $plainPassword = $_POST['password'] ?? null ;
         }
 
+        if(null === $email || null === $plainPassword || null === $username) {
+            return;
+        }
+
         $this->repository->save(username: $username, firstName: $firstName, lastName: $lastName, email: $email, plainPassword: $plainPassword);
 
         echo $this->twig->render('user/success.html.twig');
