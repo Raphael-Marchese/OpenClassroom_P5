@@ -46,4 +46,26 @@ class PostController extends Controller
 
         echo $this->twig->render('post/post.html.twig', ['post' => $post]);
     }
+
+    public function createPost():void
+    {
+        echo $this->twig->render('post/create.html.twig');
+    }
+
+    public function submitCreate():void
+    {
+        if($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $title = $_POST['title'] ?? null ;
+            $chapo = $_POST['chapo'] ?? null ;
+            $content = $_POST['content'] ?? null ;
+            $createdAt = new \DateTime();
+            // @Todo quand la branche user register and login sera mergée :
+            //             $user = $_SESSION['LOGGED_USER']['id'] ?? null ;
+            $user = 3 ;
+        }
+
+        $this->repository->save(title : $title, chapo: $chapo, createdAt: $createdAt, updatedAt: null, content: $content, author: $user);
+
+        echo $this->twig->render('post/success.html.twig');;
+    }
 }

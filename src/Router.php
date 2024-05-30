@@ -17,6 +17,8 @@ class Router
         $this->routes = [
             '/' => [HomeController::class, 'render'], // Route pour /
             '/list' => [PostController::class, 'getCollection'], // Route pour /list
+            '/post/submit/create' => [PostController::class, 'submitCreate'], // Route pour /soumettre la création d'un post
+            '/post/create' => [PostController::class, 'createPost'], // Route pour /post/create
             '/post/(\d+)' => [PostController::class, 'getPost'], // Route pour /post/id
             '/404' => Error404::class,
         ];
