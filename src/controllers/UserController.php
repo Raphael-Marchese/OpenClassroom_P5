@@ -42,7 +42,7 @@ class UserController extends Controller
 
         $this->repository->save(username: $username, firstName: $firstName, lastName: $lastName, email: $email, plainPassword: $plainPassword);
 
-        echo $this->twig->render('user/success.html.twig');;
+        echo $this->twig->render('user/success.html.twig');
     }
 
     public function login(): void
