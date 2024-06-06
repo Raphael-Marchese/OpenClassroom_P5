@@ -13,17 +13,15 @@ class UserRepository extends Database
     {
         return $this->connect()->query('SELECT * FROM user ORDER BY id ASC');
     }
-    public function save(string $username, string $firstName = null, string $lastName = null, string $email, string $plainPassword): bool
+    public function save(User $user): bool
     {
-        $password = password_hash($plainPassword, PASSWORD_DEFAULT);
         $query = 'INSERT INTO user (username, first_name, last_name, email, password) VALUES (:username, :firstName, :lastName, :email, :password)';
         $statement = $this->connect()->prepare($query);
-        $statement->bindValue(':username', $username, type: PDO::PARAM_STR);
-        $statement->bindValue(':password', $password, type: PDO::PARAM_STR);
-        $statement->bindValue(':email', $email, type: PDO::PARAM_STR);
-        $statement->bindValue(':firstName', $firstName, type: PDO::PARAM_STR);
-        $statement->bindValue(':lastName', $lastName, type: PDO::PARAM_STR);
-
+        $statement->bindValue(':username', $user->username, type: PDO::PARAM_STR);
+        $statement->bindValue(':password', $user->password, type: PDO::PARAM_STR);
+        $statement->bindValue(':email', $user->email, type: PDO::PARAM_STR);
+        $statement->bindValue(':firstName', $user->firstName, type: PDO::PARAM_STR);
+        $statement->bindValue(':lastName', $user->lastName, type: PDO::PARAM_STR);
 
         if ($statement->execute()) {
             return true;

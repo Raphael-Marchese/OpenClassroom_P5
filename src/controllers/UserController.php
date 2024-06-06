@@ -3,7 +3,10 @@ declare(strict_types=1);
 
 namespace App\controllers;
 
+use App\entity\User;
+use App\model\FormValidator;
 use App\model\UserRepository;
+use App\model\UserValidator;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -33,20 +36,46 @@ class UserController extends Controller
     public function submitRegister(): void
     {
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $username = $_POST['username'] ?? null ;
-            $firstName = $_POST['firstName'] ?? null ;
-            $lastName = $_POST['lastName'] ?? null ;
-            $email = $_POST['email'] ?? null ;
-            $plainPassword = $_POST['password'] ?? null ;
+            $sanitizedData = FormValidator::validate($_POST);
+            if (!$sanitizedData['token'] || $sanitizedData['token'] !== $_SESSION['token']) {
+                throw new \RuntimeException('Invalid CSRF token');
+            }
+            $username = $sanitizedData['username'] ?? null ;
+            $firstName = $sanitizedData['firstName'] ?? null ;
+            $lastName = $sanitizedData['lastName'] ?? null ;
+            $email = $sanitizedData['email'] ?? null ;
+            $plainPassword = $sanitizedData['password'] ?? null ;
         }
 
-        if(null === $email || null === $plainPassword || null === $username) {
-            return;
-        }
+        $password = $plainPassword ? password_hash($plainPassword, PASSWORD_DEFAULT) : $plainPassword;
 
-        $this->repository->save(username: $username, firstName: $firstName, lastName: $lastName, email: $email, plainPassword: $plainPassword);
 
-        echo $this->twig->render('user/success.html.twig');
+        $user = new User(firstName: $firstName, lastName: $lastName, username: $username, email: $email, password: $password, role: "['ROLE_USER']");
+
+        $validationErrors = UserValidator::validate($user);
+            if (count($validationErrors) === 0) {
+                echo 'ok';
+                $this->repository->save($user);
+                try {
+                    echo $this->twig->render('user/success.html.twig');
+                } catch (LoaderError|RuntimeError|SyntaxError $e) {
+                }
+            } else {
+                try {
+                    echo $this->twig->render('user/register.html.twig', [
+                        'emailError' => $validationErrors['email'],
+                        'usernameError' => $validationErrors['username'],
+                        'passwordError' => $validationErrors['password'],
+                        'formData' => [
+                            'username' => $username,
+                            'firstName' => $firstName,
+                            'lastName' => $lastName,
+                            'email' => $email
+                            ]
+                        ]);
+                } catch (LoaderError|RuntimeError|SyntaxError $e) {
+                }
+            }
     }
 
     public function login(): void
