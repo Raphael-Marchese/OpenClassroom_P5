@@ -4,9 +4,6 @@
 
 namespace App;
 
-// Report all PHP errors
-use Random\RandomException;
-
 error_reporting(-1);
 
 // Same as error_reporting(E_ALL);
@@ -16,8 +13,6 @@ require_once(__DIR__ . '/vendor/autoload.php');
 
 // Initialisation de la session si nécessaire
 session_start();
-
-$_SESSION['TOKEN'] = bin2hex(random_bytes(35));
 
 // Récupération du chemin de l'URL demandée
 $path = $_SERVER['REQUEST_URI'];

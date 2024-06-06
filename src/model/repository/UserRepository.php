@@ -1,9 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace App\model;
+namespace App\model\repository;
 
 use App\entity\User;
+use App\model\Database;
 use PDO;
 use PDOStatement;
 
@@ -15,13 +16,15 @@ class UserRepository extends Database
     }
     public function save(User $user): bool
     {
-        $query = 'INSERT INTO user (username, first_name, last_name, email, password) VALUES (:username, :firstName, :lastName, :email, :password)';
+        $query = 'INSERT INTO user (username, first_name, last_name, email, password, role) VALUES (:username, :firstName, :lastName, :email, :password, :role)';
         $statement = $this->connect()->prepare($query);
         $statement->bindValue(':username', $user->username, type: PDO::PARAM_STR);
         $statement->bindValue(':password', $user->password, type: PDO::PARAM_STR);
         $statement->bindValue(':email', $user->email, type: PDO::PARAM_STR);
         $statement->bindValue(':firstName', $user->firstName, type: PDO::PARAM_STR);
         $statement->bindValue(':lastName', $user->lastName, type: PDO::PARAM_STR);
+        $statement->bindValue(':role', 'ROLE_USER');
+
 
         if ($statement->execute()) {
             return true;

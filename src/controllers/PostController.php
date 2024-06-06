@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\controllers;
 
-use App\model\PostRepository;
+use App\model\repository\PostRepository;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;

@@ -4,9 +4,10 @@ declare(strict_types=1);
 namespace App\controllers;
 
 use App\entity\User;
-use App\model\FormValidator;
-use App\model\UserRepository;
-use App\model\UserValidator;
+use App\model\CSRFToken;
+use App\model\repository\UserRepository;
+use App\model\validator\FormValidator;
+use App\model\validator\UserValidator;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -27,19 +28,18 @@ class UserController extends Controller
      */
     public function register(): void
     {
-        echo $this->twig->render('user/register.html.twig');
+        $csrfToken = CSRFToken::generateToken();
+        echo $this->twig->render('user/register.html.twig', ['csrf_token' => $csrfToken]);
     }
 
     /**
      * @return void
+     * @throws \Exception
      */
     public function submitRegister(): void
     {
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
             $sanitizedData = FormValidator::validate($_POST);
-            if (!$sanitizedData['token'] || $sanitizedData['token'] !== $_SESSION['token']) {
-                throw new \RuntimeException('Invalid CSRF token');
-            }
             $username = $sanitizedData['username'] ?? null ;
             $firstName = $sanitizedData['firstName'] ?? null ;
             $lastName = $sanitizedData['lastName'] ?? null ;
@@ -49,12 +49,10 @@ class UserController extends Controller
 
         $password = $plainPassword ? password_hash($plainPassword, PASSWORD_DEFAULT) : $plainPassword;
 
-
         $user = new User(firstName: $firstName, lastName: $lastName, username: $username, email: $email, password: $password, role: "['ROLE_USER']");
 
         $validationErrors = UserValidator::validate($user);
             if (count($validationErrors) === 0) {
-                echo 'ok';
                 $this->repository->save($user);
                 try {
                     echo $this->twig->render('user/success.html.twig');
