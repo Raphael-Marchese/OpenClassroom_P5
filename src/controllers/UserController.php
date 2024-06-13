@@ -61,6 +61,15 @@ class UserController extends Controller
                 try {
                     echo $this->twig->render('user/success.html.twig');
                 } catch (LoaderError|RuntimeError|SyntaxError $e) {
+                    echo $this->twig->render('user/register.html.twig', [
+                        'twigError' => $e,
+                        'formData' => [
+                            'username' => $username,
+                            'firstName' => $firstName,
+                            'lastName' => $lastName,
+                            'email' => $email
+                        ]
+                    ]);
                 }
             } else {
                 try {
@@ -74,6 +83,15 @@ class UserController extends Controller
                             ]
                         ]);
                 } catch (LoaderError|RuntimeError|SyntaxError $e) {
+                    echo $this->twig->render('user/register.html.twig', [
+                        'twigError' => $e,
+                        'formData' => [
+                            'username' => $username,
+                            'firstName' => $firstName,
+                            'lastName' => $lastName,
+                            'email' => $email
+                        ]
+                    ]);
                 }
             }
     }
@@ -90,37 +108,39 @@ class UserController extends Controller
      */
     public function submitLogin(): void
     {
-        $users = $this->repository->findAll();
 
-        if($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $postData = $_POST;
-            if (isset($postData['email']) &&  isset($postData['password'])) {
-                $sanitizedData = FormValidator::validate($_POST);
+        if($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                return;
+        }
+        $postData = $_POST;
+        if (!isset($postData['email']) ||  !isset($postData['password'])) {
+            $errorMessage = 'Vous devez renseigner un email et un mot de passe.';
+            echo $this->twig->render('user/login.html.twig', ['errorMessage' => $errorMessage]);
+        }
 
-                if (!filter_var($sanitizedData['email'], FILTER_VALIDATE_EMAIL)) {
-                    $errorMessage = 'Il faut un email valide pour soumettre le formulaire.';
-                } else {
-                    foreach ($users as $user) {
-                        if (
-                            $user['email'] === $sanitizedData['email'] &&
-                            password_verify($sanitizedData['password'],$user['password'])
-                        ) {
-                            $_SESSION['LOGGED_USER'] = [
-                                'email' => $user['email'],
-                                'user_id' => $user['id'],
-                                'username' => $user['username'],
-                            ];
-                            $this->twig->addGlobal('session', $_SESSION['LOGGED_USER']);
-                            echo $this->twig->render('homepage/homepage.html.twig');
-                        }
-                    }
+        $sanitizedData = FormValidator::validate($postData);
 
-                    if (!isset($_SESSION['LOGGED_USER'])) {
-                        $errorMessage = 'Les identifiants de connexions ne sont pas valides.';
-                       echo $this->twig->render('user/login.html.twig', ['errorMessage' => $errorMessage]);
-                    }
-                }
-            }
+        if (!filter_var($sanitizedData['email'], FILTER_VALIDATE_EMAIL)) {
+            $errorMessage = 'Il faut un email valide pour soumettre le formulaire.';
+            echo $this->twig->render('user/login.html.twig', ['errorMessage' => $errorMessage]);
+        }
+
+        $user = $this->repository->findByEmail($sanitizedData['email']);
+
+        if ($user['email'] === $sanitizedData['email'] &&
+            password_verify($sanitizedData['password'],$user['password'])
+        ) {
+            $_SESSION['LOGGED_USER'] = [
+                'email' => $user['email'],
+                'user_id' => $user['id'],
+                'username' => $user['username'],
+            ];
+            $this->twig->addGlobal('session', $_SESSION['LOGGED_USER']);
+            echo $this->twig->render('homepage/homepage.html.twig');
+        }
+        if (!isset($_SESSION['LOGGED_USER'])) {
+            $errorMessage = 'Les identifiants de connexions ne sont pas valides.';
+            echo $this->twig->render('user/login.html.twig', ['errorMessage' => $errorMessage]);
         }
     }
 

@@ -39,5 +39,4 @@ class PostRepository extends Database
 
         return null; // Aucun résultat trouvé
     }
-
 }

@@ -33,6 +33,22 @@ class UserRepository extends Database
             error_log('Erreur lors de l\'insertion de l\'utilisateur: ' . implode(', ', $stmt->errorInfo()));
             return false;
         }
+    }
 
+    public function findByEmail(string $email): bool | null |array
+    {
+        $query = 'SELECT * FROM user WHERE email = :email';
+        $statement = $this->connect()->prepare($query);
+        $statement->bindValue(':email', $email, PDO::PARAM_STR);
+        $statement->execute();
+
+        $result = $statement->fetch(PDO::FETCH_ASSOC);
+
+        // Vérifier s'il y a des résultats
+        if ($result !== false) {
+            return $result;
+        }
+
+        return null; // Aucun résultat trouvé
     }
 }
