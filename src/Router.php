@@ -4,6 +4,7 @@ namespace App;
 
 use App\controllers\PostController;
 use App\controllers\HomeController;
+use App\controllers\UserController;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -20,6 +21,11 @@ class Router
             '/post/submit/create' => [PostController::class, 'submitCreate'], // Route pour /soumettre la création d'un post
             '/post/create' => [PostController::class, 'createPost'], // Route pour /post/create
             '/post/(\d+)' => [PostController::class, 'getPost'], // Route pour /post/id
+            '/register' => [UserController::class, 'register'],
+            '/register/submit' => [UserController::class, 'submitRegister'],
+            '/login' => [UserController::class, 'login'],
+            '/login/submit' => [UserController::class, 'submitLogin'],
+            '/logout' => [UserController::class, 'logout'],
             '/404' => Error404::class,
         ];
     }

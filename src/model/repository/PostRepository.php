@@ -1,8 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace App\model;
+namespace App\model\repository;
 
+use App\model\Database;
 use App\entity\BlogPost;
 use DateTime;
 use PDO;
