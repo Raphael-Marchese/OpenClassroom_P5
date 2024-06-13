@@ -22,10 +22,6 @@ class FormValidator implements ValidatorInterface
                 $sanitizedData[$key] = $value;
             }
         }
-        if ($sanitizedData['csrf_token'] && !CSRFToken::validateToken($sanitizedData['csrf_token']))
-        {
-            throw new \RuntimeException('Invalid CSRF token');
-        }
 
         return $sanitizedData;
     }

@@ -5,22 +5,19 @@ namespace App\model;
 
 class CSRFToken
 {
-    public static function generateToken()
+    public static function generateToken(string $stringToHash): string
     {
-        if (!isset($_SESSION)) {
-            session_start();
-        }
-        if (!isset($_SESSION['csrf_token'])) {
-            $_SESSION['csrf_token'] = bin2hex(random_bytes(35));
-        }
-        return $_SESSION['csrf_token'];
+        return hash('sha256', $stringToHash);
     }
 
-    public static function validateToken($token): bool
+    public static function validateToken(string $token, string $stringToValidate): array
     {
-        if (!isset($_SESSION)) {
-            session_start();
+        $errors = [];
+        $tokenToVerify = hash('sha256', $stringToValidate);
+        if ($token !== $tokenToVerify) {
+            $errors['csrf_token'] = 'Le token csrf n\'est pas valide';
         }
-        return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
+
+        return $errors;
     }
 }

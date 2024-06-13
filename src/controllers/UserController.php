@@ -28,7 +28,7 @@ class UserController extends Controller
      */
     public function register(): void
     {
-        $csrfToken = CSRFToken::generateToken();
+        $csrfToken = CSRFToken::generateToken('register');
         echo $this->twig->render('user/register.html.twig', ['csrf_token' => $csrfToken]);
     }
 
@@ -38,8 +38,10 @@ class UserController extends Controller
      */
     public function submitRegister(): void
     {
-        if($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $csrfCheck = 'register';
+        if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['csrf_token'])) {
             $sanitizedData = FormValidator::validate($_POST);
+            $token = $sanitizedData['csrf_token'];
             $username = $sanitizedData['username'] ?? null ;
             $firstName = $sanitizedData['firstName'] ?? null ;
             $lastName = $sanitizedData['lastName'] ?? null ;
@@ -51,7 +53,9 @@ class UserController extends Controller
 
         $user = new User(firstName: $firstName, lastName: $lastName, username: $username, email: $email, password: $password, role: "['ROLE_USER']");
 
-        $validationErrors = UserValidator::validate($user);
+
+        $validationErrors = array_merge(UserValidator::validate($user), CSRFToken::validateToken($token, $csrfCheck));
+
             if (count($validationErrors) === 0) {
                 $this->repository->save($user);
                 try {
@@ -61,9 +65,7 @@ class UserController extends Controller
             } else {
                 try {
                     echo $this->twig->render('user/register.html.twig', [
-                        'emailError' => $validationErrors['email'],
-                        'usernameError' => $validationErrors['username'],
-                        'passwordError' => $validationErrors['password'],
+                        'errors' => $validationErrors,
                         'formData' => [
                             'username' => $username,
                             'firstName' => $firstName,
@@ -93,13 +95,15 @@ class UserController extends Controller
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
             $postData = $_POST;
             if (isset($postData['email']) &&  isset($postData['password'])) {
-                if (!filter_var($postData['email'], FILTER_VALIDATE_EMAIL)) {
+                $sanitizedData = FormValidator::validate($_POST);
+
+                if (!filter_var($sanitizedData['email'], FILTER_VALIDATE_EMAIL)) {
                     $errorMessage = 'Il faut un email valide pour soumettre le formulaire.';
                 } else {
                     foreach ($users as $user) {
                         if (
-                            $user['email'] === $postData['email'] &&
-                            password_verify($postData['password'],$user['password'])
+                            $user['email'] === $sanitizedData['email'] &&
+                            password_verify($sanitizedData['password'],$user['password'])
                         ) {
                             $_SESSION['LOGGED_USER'] = [
                                 'email' => $user['email'],

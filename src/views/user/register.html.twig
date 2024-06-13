@@ -31,17 +31,13 @@
                                     <input class="form-control" name="username" id="username" type="text" placeholder="Entrez un pseudo" data-sb-validations="required" value="{{ formData.username|default('') }}"/>
                                     <label for="name">Pseudo</label>
                                     <div class="invalid-feedback" data-sb-feedback="username:required">Le pseudo est obligatoire</div>
-                                    {% if usernameError %}
-                                        <div class=" text-danger mb-3">{{usernameError}}</div>
-                                    {% endif %}
+                                        <div class=" text-danger mb-3">{{errors.username}}</div>
                                 </div>
                                 <!-- Email address input-->
                                 <div class="form-floating mb-3">
                                     <input class="form-control" name="email" id="email" type="email" placeholder="name@example.com" data-sb-validations="required,email" value="{{ formData.email|default('') }}" />
                                     <label for="email">Adresse email</label>
-                                    {% if emailError %}
-                                    <div class=" text-danger mb-3">{{emailError}}</div>
-                                    {% endif %}
+                                    <div class=" text-danger mb-3">{{errors.email}}</div>
                                     <div class="invalid-feedback" data-sb-feedback="email:required">L'email est obligatoire</div>
                                     <div class="invalid-feedback" data-sb-feedback="email:email">Cet email n'est pas valide</div>
                                 </div>
@@ -50,9 +46,7 @@
                                 <div class="form-floating mb-3">
                                     <input class="form-control" name="password" id="password" type="password" data-sb-validations="required" />
                                     <label for="password">Mot de passe</label>
-                                    {% if passwordError %}
-                                        <div class=" text-danger mb-3">{{passwordError}}</div>
-                                    {% endif %}
+                                        <div class=" text-danger mb-3">{{errors.password}}</div>
                                     <div class="invalid-feedback" data-sb-feedback="password:required">Le mot de passe est obligatoire</div>
                                 </div>
 
@@ -60,6 +54,7 @@
 
                                 <!-- Submit Button-->
                                 <div class="d-grid"><button class="btn btn-primary btn-lg" id="submitButton" type="submit">Submit</button></div>
+                                <div class=" text-danger mb-3">{{ errors.csrf_token }}</div>
                             </form>
                         </div>
                     </div>
