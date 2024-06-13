@@ -7,7 +7,6 @@ use Twig\Environment;
 use Twig\Extension\DebugExtension;
 use Twig\Extra\Intl\IntlExtension;
 use Twig\Loader\FilesystemLoader;
-use App\Model\Database;
 
 abstract class Controller
 {
@@ -19,6 +18,10 @@ abstract class Controller
         $this->twig = new Environment($loader,  ['debug' => true]);
         $this->twig->addExtension(new DebugExtension());
         $this->twig->addExtension(new IntlExtension());
+        if (isset($_SESSION['LOGGED_USER'])) {
+            $this->twig->addGlobal('session', $_SESSION['LOGGED_USER']);
+        }
+        $_SESSION['TOKEN'] = bin2hex(random_bytes(35));
 
     }
 }

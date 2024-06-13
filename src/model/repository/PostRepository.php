@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace App\model;
+namespace App\model\repository;
 
-use App\entity\BlogPost;
+use App\model\Database;
 use PDO;
 use PDOStatement;
 
@@ -39,5 +39,4 @@ class PostRepository extends Database
 
         return null; // Aucun résultat trouvé
     }
-
 }

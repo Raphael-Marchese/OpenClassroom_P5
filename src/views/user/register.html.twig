@@ -1,0 +1,68 @@
+{% extends 'layout.html.twig' %}
+
+{% block body %}
+    <main class="flex-shrink-0">
+        <!-- Page content-->
+        <section class="py-5">
+            <div class="container px-5">
+                <!-- Contact form-->
+                <div class="bg-light rounded-3 py-5 px-4 px-md-5 mb-5">
+                    <div class="text-center mb-5">
+                        <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-envelope"></i></div>
+                        <h1 class="fw-bolder">Inscription</h1>
+                        <p class="lead fw-normal text-muted mb-0">Merci de compléter ce formulaire d'inscription</p>
+                    </div>
+                    <div class="row gx-5 justify-content-center">
+                        <div class="col-lg-8 col-xl-6">
+                            <form id="registerForm" method="post" action="/register/submit">
+                                <!-- firstName input-->
+                                <div class="form-floating mb-3">
+                                    <input class="form-control" name="firstName" id="firstName" type="text" placeholder="Entrez votre prénom" value="{{ formData.firstName|default('') }}"/>
+                                    <label for="name">Prénom</label>
+                                </div>
+
+                                <!-- lastName input-->
+                                <div class="form-floating mb-3">
+                                    <input class="form-control" name="lastName" id="lastName" type="text" placeholder="Entrez votre nom" value="{{ formData.lastName|default('') }}"/>
+                                    <label for="name">Nom</label>
+                                </div>
+                                <!-- userName input-->
+                                <div class="form-floating mb-3">
+                                    <input class="form-control" name="username" id="username" type="text" placeholder="Entrez un pseudo" data-sb-validations="required" value="{{ formData.username|default('') }}"/>
+                                    <label for="name">Pseudo</label>
+                                    <div class="invalid-feedback" data-sb-feedback="username:required">Le pseudo est obligatoire</div>
+                                        <div class=" text-danger mb-3">{{errors.username}}</div>
+                                </div>
+                                <!-- Email address input-->
+                                <div class="form-floating mb-3">
+                                    <input class="form-control" name="email" id="email" type="email" placeholder="name@example.com" data-sb-validations="required,email" value="{{ formData.email|default('') }}" />
+                                    <label for="email">Adresse email</label>
+                                    <div class=" text-danger mb-3">{{errors.email}}</div>
+                                    <div class="invalid-feedback" data-sb-feedback="email:required">L'email est obligatoire</div>
+                                    <div class="invalid-feedback" data-sb-feedback="email:email">Cet email n'est pas valide</div>
+                                </div>
+
+                                <!-- Password input-->
+                                <div class="form-floating mb-3">
+                                    <input class="form-control" name="password" id="password" type="password" data-sb-validations="required" />
+                                    <label for="password">Mot de passe</label>
+                                        <div class=" text-danger mb-3">{{errors.password}}</div>
+                                    <div class="invalid-feedback" data-sb-feedback="password:required">Le mot de passe est obligatoire</div>
+                                </div>
+
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+                                <!-- Submit Button-->
+                                <div class="d-grid"><button class="btn btn-primary btn-lg" id="submitButton" type="submit">Submit</button></div>
+                                <div class=" text-danger mb-3">{{ errors.csrf_token }}</div>
+                                <div class=" text-danger mb-3">{{ twigError }}</div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+{% endblock %}
