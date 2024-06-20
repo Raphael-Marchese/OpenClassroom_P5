@@ -3,7 +3,11 @@ declare(strict_types=1);
 
 namespace App\controllers;
 
+use App\entity\BlogPost;
 use App\model\repository\PostRepository;
+use App\model\validator\FormValidator;
+use App\model\validator\ImageValidator;
+use App\model\validator\PostValidator;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -54,15 +58,28 @@ class PostController extends Controller
 
     public function submitCreate():void
     {
-        if($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $title = $_POST['title'] ?? null ;
-            $chapo = $_POST['chapo'] ?? null ;
-            $content = $_POST['content'] ?? null ;
-            $createdAt = new \DateTime();
-            // @Todo quand la branche user register and login sera mergée :
-            //             $user = $_SESSION['LOGGED_USER']['id'] ?? null ;
-            $user = 3 ;
+        if($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return;
         }
+        $sanitizedData = FormValidator::validate($_POST);
+        if(isset($_FILES['image']) && !empty($_FILES['image'])) {
+            $sanitizedImage = FormValidator::validate($_FILES['image']);
+        }
+
+
+        $title = $sanitizedData['title'] ?? null ;
+        $chapo = $sanitizedData['chapo'] ?? null ;
+        $content = $sanitizedData['content'] ?? null ;
+        $createdAt = new \DateTime();
+        $image = $sanitizedImage['size'] !== 0 ? $sanitizedImage : null;
+        $user = $_SESSION['LOGGED_USER']['id'] ?? null ;
+
+        $post = new BlogPost(title: $title, chapo: $chapo, content: $content, image: $image, author: $user, status: );
+
+        $validationErrors = array_merge(ImageValidator::validate($image), PostValidator::validate($sanitizedData)) ;
+
+
+
 
         $this->repository->save(title : $title, chapo: $chapo, createdAt: $createdAt, updatedAt: null, content: $content, author: $user);
 

@@ -15,7 +15,7 @@
                     <div class="row gx-5 justify-content-center">
                         <div class="col-lg-8 col-xl-6">
 
-                            <form id="createPostForm" method="post" action="/post/submit/create">
+                            <form id="createPostForm" method="post" action="/post/submit/create" enctype="multipart/form-data">
                                 <!-- Title input-->
                                 <div class="form-floating mb-3">
                                     <input class="form-control" name="title" id="title" type="text" placeholder="Ecrivez ici votre titre..." data-sb-validations="required" />
@@ -29,10 +29,10 @@
                                     <div class="invalid-feedback" data-sb-feedback="email:required">un chapo est obligatoire</div>
                                 </div>
                                 <!-- Image upload-->
-{#                                <div class="form-floating mb-3">
+                                <div class="form-floating mb-3">
                                     <input class="form-control" type="file" id="image" name="image" accept="image/png, image/jpeg" />
                                     <label class="mb-2" for="image">Choisissez une photo d'illustration</label>
-                                </div>#}
+                                </div>
                                 <!-- Content input-->
                                 <div class="form-floating mb-3">
                                     <textarea class="form-control" id="content" name="content"  type="text" placeholder="Ajouter le contenu de l'article" style="height: 20rem" data-sb-validations="required"></textarea>
