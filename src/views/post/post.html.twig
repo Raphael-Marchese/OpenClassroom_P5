@@ -12,18 +12,22 @@
                         <!-- Post header-->
                         <header class="mb-4">
                             <!-- Post title-->
-                            <h1 class="fw-bolder mb-1">{{ post.title }}</h1>
+                            <h1 class="fw-bolder mb-1">{{ post.title|raw  }}</h1>
+                            <p class="card-text mb-0">{{ post.chapo|raw }}</p>
+
                             <!-- Post meta content-->
                             <div class="text-muted fst-italic mb-2">{{ post.updated_at|format_datetime('full', 'short', locale='fr') }}</div>
                             <div class="text-muted">{{ post.author.username }}</div>
 
 
                         </header>
+
                         <!-- Preview image figure-->
-                        <figure class="mb-4"><img class="img-fluid rounded" src="../../../public/assets/images/franken.png" alt="..." /></figure>
+                        <figure class="mb-4"><img class="img-fluid rounded" src="../../../public/assets/images/{{ post.image }}" alt="..." /></figure>
+
                         <!-- Post content-->
                         <section class="mb-5">
-                            <p class="fs-5 mb-4">{{ post.content }}</p>
+                            <p class="fs-5 mb-4">{{ post.content|raw }}</p>
                         </section>
                     </article>
                     <!-- Comments section-->

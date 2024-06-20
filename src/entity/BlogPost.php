@@ -3,24 +3,22 @@ declare(strict_types=1);
 
 namespace App\entity;
 
-use Cassandra\Date;
-
 class BlogPost
 {
+
+    public int $id;
 
     public function __construct(
         public string $title,
         public string $chapo,
-        public \DateTimeInterface $createdAt = new \DateTimeImmutable(),
-        public ?\DateTimeInterface $updatedAt = null,
         public string $content,
-        public ?string $image,
         public string $status,
+        public \DateTimeInterface $createdAt,
         public User $author,
+        public ?string $image,
+        public ?\DateTimeInterface $updatedAt = null,
     )
     {
     }
-
-    public readonly int $id;
 
 }

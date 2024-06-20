@@ -27,5 +27,10 @@ class PostValidator implements ValidatorInterface
             $errors['content'] = 'L\'article doit avoir un contenu';
         }
 
-        return $errors;    }
+        if (empty($data->author)) {
+            $errors['author'] = 'Vous devez être connecté pour écrire un article';
+        }
+
+        return $errors;
+    }
 }

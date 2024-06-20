@@ -42,24 +42,28 @@ class PostRepository extends Database
         return null; // Aucun résultat trouvé
     }
 
-    public function save(string $title, string $chapo, DateTime $createdAt = null, DateTime $updatedAt = null,  string $content, int $author): bool
+    public function save(BlogPost $blogPost ): bool
     {
-        $query = 'INSERT INTO blog_post (title, chapo, created_at, updated_at, content, status, author) VALUES (:title, :chapo, :created_at, :updated_at, :content, :status, :author)';
-        $statement = $this->connect()->prepare($query);
-        $statement->bindValue(':title', $title , type: PDO::PARAM_STR);
-        $statement->bindValue(':chapo', $chapo, type: PDO::PARAM_STR);
-        $statement->bindValue(':created_at', $createdAt?->format('Y-m-d H:i:s'), PDO::PARAM_STR);
-        $statement->bindValue(':updated_at', $updatedAt?->format('Y-m-d H:i:s'), PDO::PARAM_STR);
-        $statement->bindValue(':status', 'published', type: PDO::PARAM_STR);
-        $statement->bindValue(':content', $content, type: PDO::PARAM_STR);
-        $statement->bindValue(':author', $author, type: PDO::PARAM_INT);
+        $query = 'INSERT INTO blog_post (title, chapo, created_at, updated_at, content, status, author, image) VALUES (:title, :chapo, :createdAt, :updatedAt, :content, :status, :author, :image)';
+        $db = $this->connect();
+        $statement = $db->prepare($query);
+        $statement->bindValue(':title', $blogPost->title , type: PDO::PARAM_STR);
+        $statement->bindValue(':chapo', $blogPost->chapo, type: PDO::PARAM_STR);
+        $statement->bindValue(':createdAt', $blogPost->createdAt->format('Y-m-d H:i:s'), PDO::PARAM_STR);
+        $statement->bindValue(':updatedAt', $blogPost->updatedAt?->format('Y-m-d H:i:s'), PDO::PARAM_STR);
+        $statement->bindValue(':status', $blogPost->status, type: PDO::PARAM_STR);
+        $statement->bindValue(':content', $blogPost->content, type: PDO::PARAM_STR);
+        $statement->bindValue(':author', $blogPost->author->id, type: PDO::PARAM_INT);
+        $statement->bindValue(':image', $blogPost->image, type: PDO::PARAM_STR);
 
         if ($statement->execute()) {
+
+            $blogPost->id = (int) $db->lastInsertId();
+
             return true;
-        } else {
-            error_log('Erreur lors de la création de l\'article: ' . implode(', ', $stmt->errorInfo()));
-            return false;
         }
 
+        error_log('Erreur lors de la création de l\'article: ' . implode(', ', $stmt->errorInfo()));
+        return false;
     }
 }

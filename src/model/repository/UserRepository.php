@@ -51,4 +51,30 @@ class UserRepository extends Database
 
         return null; // Aucun résultat trouvé
     }
+
+    public function findById(?int $id): ?User
+    {
+        $query = 'SELECT * FROM user WHERE id = :id';
+        $statement = $this->connect()->prepare($query);
+        $statement->bindValue(':id', $id, PDO::PARAM_INT);
+        $statement->execute();
+
+        $result = $statement->fetch(PDO::FETCH_ASSOC);
+
+        // Vérifier s'il y a des résultats
+        if ($result !== false) {
+            $user = new User(
+                $result['first_name'],
+                $result['last_name'],
+                $result['username'],
+                $result['email'],
+                $result['password'],
+                $result['role']
+            );
+            $user->setId($result['id']);
+            return $user;
+        }
+
+        return null; // Aucun résultat trouvé
+    }
 }

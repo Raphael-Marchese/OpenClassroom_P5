@@ -3,8 +3,12 @@ declare(strict_types=1);
 
 namespace App\controllers;
 
+use App\entity\User;
 use App\entity\BlogPost;
+use App\Exceptions\AccessDeniedException;
+use App\Exceptions\BlogPostCreationException;
 use App\model\repository\PostRepository;
+use App\model\repository\UserRepository;
 use App\model\validator\FormValidator;
 use App\model\validator\ImageValidator;
 use App\model\validator\PostValidator;
@@ -16,10 +20,12 @@ class PostController extends Controller
 {
 
     private PostRepository $repository;
+    private UserRepository $userRepository;
     public function __construct()
     {
         parent::__construct();
         $this->repository = new PostRepository();
+        $this->userRepository = new UserRepository();
     }
 
     /**
@@ -61,28 +67,76 @@ class PostController extends Controller
         if($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
-        $sanitizedData = FormValidator::validate($_POST);
-        if(isset($_FILES['image']) && !empty($_FILES['image'])) {
-            $sanitizedImage = FormValidator::validate($_FILES['image']);
+
+        try {
+            $user = $this->getUser();
+        } catch (AccessDeniedException) {
+            header('location: /login');
+            return;
         }
 
+        $post = $this->extractBlogPost($user);
+
+        try {
+            $this->validateData($post);
+            $this->repository->save($post);
+
+            header(sprintf('location: /post/%s', $post->id));
+            return;
+
+        } catch (BlogPostCreationException $e) {
+            $validationErrors = $e->validationErrors;
+
+            echo $this->twig->render('post/create.html.twig', [
+                'errors' => $validationErrors,
+                'formData' => [
+                    'title' => $post->title,
+                    'chapo' => $post->chapo,
+                    'content' => $post->content,
+                ]
+            ]);
+        }
+    }
+
+    private function getUser(): User
+    {
+        $userId = $_SESSION['LOGGED_USER']['user_id'] ?? null ;
+        $user = $this->userRepository->findById($userId);
+
+        if (null === $user) {
+            throw new AccessDeniedException();
+        }
+
+        return $user;
+    }
+
+    private function validateData(BlogPost $post)
+    {
+        $image = $_FILES['image'];
+
+        $validationErrors = ImageValidator::validate($image);
+        if (count($validationErrors) > 0) {
+            throw new BlogPostCreationException($validationErrors);
+        }
+
+        $validationErrors = PostValidator::validate($post);
+        if (count($validationErrors) > 0) {
+            throw new BlogPostCreationException($validationErrors);
+        }
+    }
+
+    private function extractBlogPost(User $user): BlogPost
+    {
+        $sanitizedData = FormValidator::sanitize($_POST);
+        $image = $_FILES['image'];
 
         $title = $sanitizedData['title'] ?? null ;
         $chapo = $sanitizedData['chapo'] ?? null ;
         $content = $sanitizedData['content'] ?? null ;
-        $createdAt = new \DateTime();
-        $image = $sanitizedImage['size'] !== 0 ? $sanitizedImage : null;
-        $user = $_SESSION['LOGGED_USER']['id'] ?? null ;
+        $image = $image['size'] !== 0 ? basename($image['name']) : null;
+        $status = $sanitizedData['submitButton'] ?? null;
+        $createdAt = new \DateTimeImmutable();
 
-        $post = new BlogPost(title: $title, chapo: $chapo, content: $content, image: $image, author: $user, status: );
-
-        $validationErrors = array_merge(ImageValidator::validate($image), PostValidator::validate($sanitizedData)) ;
-
-
-
-
-        $this->repository->save(title : $title, chapo: $chapo, createdAt: $createdAt, updatedAt: null, content: $content, author: $user);
-
-        echo $this->twig->render('post/success.html.twig');;
+        return new BlogPost(title: $title, chapo: $chapo, content: $content, createdAt: $createdAt, image: $image, status: $status, author: $user);
     }
 }

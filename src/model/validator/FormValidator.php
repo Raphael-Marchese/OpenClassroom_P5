@@ -5,13 +5,13 @@ namespace App\model\validator;
 
 use App\model\CSRFToken;
 
-class FormValidator implements ValidatorInterface
+class FormValidator
 {
 
     /**
      * @throws \Exception
      */
-    public static function validate($data): array
+    public static function sanitize($data): array
     {
         $sanitizedData = [];
 
