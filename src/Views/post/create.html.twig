@@ -15,7 +15,7 @@
                     <div class="row gx-5 justify-content-center">
                         <div class="col-lg-8 col-xl-6">
 
-                            <form id="createPostForm" method="post" action="/post/submit/create" enctype="multipart/form-data">
+                            <form id="createPostForm" method="post" action="/post/create/submit" enctype="multipart/form-data">
 
                                 <div class=" text-danger mb-3">{{errors.author}}</div>
 
@@ -55,7 +55,7 @@
                                 <!-- Submit Button-->
                                 <div class="d-grid">
                                     <button class="btn btn-primary btn-lg " name="submitButton" id="publish" value="published" type="submit">Publier</button>
-                                    <button class="btn btn-primary btn-lg " name="submitButton" id="draft" value="draft" type="submit" > Enregistrer en tant que brouillon</button>
+                                    <button class="btn btn-primary btn-lg mt-3" name="submitButton" id="draft" value="draft" type="submit" > Enregistrer en tant que brouillon</button>
                                 </div>
                                 <div class=" text-danger mb-3">{{ twigError }}</div>
 

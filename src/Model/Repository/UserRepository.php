@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace App\model\repository;
+namespace App\Model\Repository;
 
-use App\entity\User;
-use App\model\Database;
+use App\Entity\User;
+use App\Model\Database;
 use PDO;
 use PDOStatement;
 

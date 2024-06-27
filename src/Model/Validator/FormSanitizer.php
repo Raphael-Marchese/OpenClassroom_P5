@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace App\model\validator;
+namespace App\Model\Validator;
 
-use App\model\CSRFToken;
+use App\Model\CSRFToken;
 
-class FormValidator
+class FormSanitizer
 {
 
     /**

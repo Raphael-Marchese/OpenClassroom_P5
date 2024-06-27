@@ -1,20 +1,19 @@
 <?php
 declare(strict_types=1);
 
-namespace App\model\validator;
+namespace App\Model\Validator;
 
-use App\entity\BlogPost;
+use App\Entity\BlogPost;
 
+/**
+ * @implements ValidatorInterface<BlogPost>
+ */
 class PostValidator implements ValidatorInterface
 {
-
-    public static function validate($data): array
+    #[\Override]
+    public function validate($data): array
     {
         $errors = [];
-
-        if (!$data instanceof BlogPost) {
-            return [];
-        }
 
         if (empty($data->title)) {
             $errors['title'] = 'Renseigner un titre est obligatoire';

@@ -1,17 +1,17 @@
 <?php
 declare(strict_types=1);
 
-namespace App\model\validator;
+namespace App\Model\Validator;
 
-use App\entity\User;
+use App\Entity\User;
 
 class UserValidator implements ValidatorInterface
 {
     /**
-     * @param $data
+     * @param User $data
      * @return array<string, string>
      */
-    public static function validate($data): array
+    public function validate(User $data): array
     {
         $errors = [];
 

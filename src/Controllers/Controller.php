@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\controllers;
+namespace App\Controllers;
 
 use Twig\Environment;
 use Twig\Extension\DebugExtension;

@@ -1,11 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace App\model\validator;
+namespace App\Model\Validator;
 
 class ImageValidator implements ValidatorInterface
 {
-    public static function validate($data): array
+    /**
+     * @param array $data
+     * @return array
+     */
+    public function validate($data): array
     {
         $errors = [];
 

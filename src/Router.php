@@ -2,9 +2,9 @@
 
 namespace App;
 
-use App\controllers\PostController;
-use App\controllers\HomeController;
-use App\controllers\UserController;
+use App\Controllers\PostController;
+use App\Controllers\HomeController;
+use App\Controllers\UserController;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -18,8 +18,8 @@ class Router
         $this->routes = [
             '/' => [HomeController::class, 'render'], // Route pour /
             '/list' => [PostController::class, 'getCollection'], // Route pour /list
-            '/post/submit/create' => [PostController::class, 'submitCreate'], // Route pour /soumettre la création d'un post
-            '/post/create' => [PostController::class, 'createPost'], // Route pour /post/create
+            '/post/create' => [PostController::class, 'createPostForm'], // Route pour /post/create
+            '/post/create/submit' => [PostController::class, 'createPost'], // Route pour /soumettre la création d'un post
             '/post/(\d+)' => [PostController::class, 'getPost'], // Route pour /post/id
             '/register' => [UserController::class, 'register'],
             '/register/submit' => [UserController::class, 'submitRegister'],

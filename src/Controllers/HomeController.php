@@ -1,6 +1,6 @@
 <?php
 
-namespace App\controllers;
+namespace App\Controllers;
 
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;

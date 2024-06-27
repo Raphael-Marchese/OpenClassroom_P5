@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace App\controllers;
+namespace App\Controllers;
 
-use App\entity\User;
-use App\model\CSRFToken;
-use App\model\repository\UserRepository;
-use App\model\validator\FormValidator;
-use App\model\validator\UserValidator;
+use App\Entity\User;
+use App\Model\CSRFToken;
+use App\Model\Repository\UserRepository;
+use App\Model\Validator\FormSanitizer;
+use App\Model\Validator\UserValidator;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -40,7 +40,7 @@ class UserController extends Controller
     {
         $csrfCheck = 'register';
         if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['csrf_token'])) {
-            $sanitizedData = FormValidator::sanitize($_POST);
+            $sanitizedData = FormSanitizer::sanitize($_POST);
             $token = $sanitizedData['csrf_token'];
             $username = $sanitizedData['username'] ?? null ;
             $firstName = $sanitizedData['firstName'] ?? null ;
@@ -118,7 +118,7 @@ class UserController extends Controller
             echo $this->twig->render('user/login.html.twig', ['errorMessage' => $errorMessage]);
         }
 
-        $sanitizedData = FormValidator::sanitize($postData);
+        $sanitizedData = FormSanitizer::sanitize($postData);
 
         if (!filter_var($sanitizedData['email'], FILTER_VALIDATE_EMAIL)) {
             $errorMessage = 'Il faut un email valide pour soumettre le formulaire.';

@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace App\model\repository;
+namespace App\Model\Repository;
 
-use App\model\Database;
-use App\entity\BlogPost;
+use App\Model\Database;
+use App\Entity\BlogPost;
 use DateTime;
 use PDO;
 use PDOStatement;
@@ -17,7 +17,7 @@ class PostRepository extends Database
      */
     public function findAll(): bool|PDOStatement
     {
-        return $this->connect()->query('SELECT * FROM blog_post ORDER BY updated_at DESC');
+        return $this->connect()->query('SELECT * FROM blog_post ORDER BY updated_at ASC');
     }
 
     /**
