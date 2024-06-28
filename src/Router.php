@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Controllers\DeletePostController;
 use App\Controllers\EditPostController;
 use App\Controllers\PostController;
 use App\Controllers\HomeController;
@@ -24,6 +25,7 @@ class Router
             '/post/(\d+)' => [PostController::class, 'getPost'], // Route pour /post/id
             '/post/(\d+)/edit' => [EditPostController::class, 'postEditForm'],
             '/post/(\d+)/edit/submit' => [EditPostController::class, 'postEdit'],
+            '/post/(\d+)/delete' => [DeletePostController::class, 'deletePost'],
             '/register' => [UserController::class, 'register'],
             '/register/submit' => [UserController::class, 'submitRegister'],
             '/login' => [UserController::class, 'login'],

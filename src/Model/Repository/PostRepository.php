@@ -77,7 +77,7 @@ class PostRepository extends Database
         return false;
     }
 
-    public function update(BlogPost $blogPost, string $id): bool
+    public function update(BlogPost $blogPost, int $id): bool
     {
         $query = 'UPDATE blog_post SET title = :title, chapo = :chapo, updated_at = :updatedAt, content = :content, status = :status, image = :image WHERE id = :id';
         $db = $this->connect();
@@ -89,6 +89,21 @@ class PostRepository extends Database
         $statement->bindValue(':status', $blogPost->status, type: PDO::PARAM_STR);
         $statement->bindValue(':content', $blogPost->content, type: PDO::PARAM_STR);
         $statement->bindValue(':image', $blogPost->image, type: PDO::PARAM_STR);
+
+        if ($statement->execute()) {
+            return true;
+        } else {
+            error_log('Erreur lors de la mise à jour de l\'article: ' . implode(', ', $stmt->errorInfo()));
+            return false;
+        }
+    }
+
+    public function delete(int $id): bool
+    {
+        $query = 'DELETE FROM blog_post WHERE id = :id';
+        $db = $this->connect();
+        $statement = $db->prepare($query);
+        $statement->bindValue(':id', $id, PDO::PARAM_INT);
 
         if ($statement->execute()) {
             return true;

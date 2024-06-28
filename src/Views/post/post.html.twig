@@ -6,11 +6,14 @@
         <a href="/post/{{ post.id }}/edit">
             <button class="btn btn-secondary me-3">Modifier</button>
         </a>
-    <button class="btn btn-danger">Supprimer</button>
-
+        <a href="/post/{{ post.id }}/delete">
+            <button class="btn btn-danger">Supprimer</button>
+        </a>
     </div>
+    <div class=" text-danger m-3"> {{ errors.admin }} </div>
 
-    <!-- Page Content-->
+
+        <!-- Page Content-->
     <section class="py-5">
         <div class="container px-5 my-5">
             <div class="row gx-5 justify-content-center">
