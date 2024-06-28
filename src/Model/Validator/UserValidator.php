@@ -11,7 +11,7 @@ class UserValidator implements ValidatorInterface
      * @param User $data
      * @return array<string, string>
      */
-    public function validate(User $data): array
+    public function validate($data): array
     {
         $errors = [];
 

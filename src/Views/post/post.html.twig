@@ -2,6 +2,14 @@
 
 {% block body %}
 <main class="flex-shrink-0">
+    <div class="d-flex justify-content-end m-3">
+        <a href="/post/{{ post.id }}/edit">
+            <button class="btn btn-secondary me-3">Modifier</button>
+        </a>
+    <button class="btn btn-danger">Supprimer</button>
+
+    </div>
+
     <!-- Page Content-->
     <section class="py-5">
         <div class="container px-5 my-5">

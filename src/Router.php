@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Controllers\EditPostController;
 use App\Controllers\PostController;
 use App\Controllers\HomeController;
 use App\Controllers\UserController;
@@ -21,6 +22,8 @@ class Router
             '/post/create' => [PostController::class, 'createPostForm'], // Route pour /post/create
             '/post/create/submit' => [PostController::class, 'createPost'], // Route pour /soumettre la création d'un post
             '/post/(\d+)' => [PostController::class, 'getPost'], // Route pour /post/id
+            '/post/(\d+)/edit' => [EditPostController::class, 'postEditForm'],
+            '/post/(\d+)/edit/submit' => [EditPostController::class, 'postEdit'],
             '/register' => [UserController::class, 'register'],
             '/register/submit' => [UserController::class, 'submitRegister'],
             '/login' => [UserController::class, 'login'],

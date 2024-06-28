@@ -17,7 +17,7 @@ class PostExtractor
     }
     public function extractBlogPost(User $user, array $postData, array $fileData): BlogPost
     {
-        $sanitizedData = FormSanitizer::sanitize($postData);
+        $sanitizedData = $this->formSanitizer->sanitize($postData);
         $image = $fileData['image'];
 
         $title = $sanitizedData['title'] ?? null ;

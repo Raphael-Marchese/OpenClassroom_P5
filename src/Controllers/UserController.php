@@ -15,10 +15,12 @@ use Twig\Error\SyntaxError;
 class UserController extends Controller
 {
     private UserRepository $repository;
+    private FormSanitizer $formSanitizer;
     public function __construct()
     {
         parent::__construct();
         $this->repository = new UserRepository();
+        $this->formSanitizer = new FormSanitizer();
     }
 
     /**
@@ -40,7 +42,7 @@ class UserController extends Controller
     {
         $csrfCheck = 'register';
         if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['csrf_token'])) {
-            $sanitizedData = FormSanitizer::sanitize($_POST);
+            $sanitizedData = $this->formSanitizer->sanitize($_POST);
             $token = $sanitizedData['csrf_token'];
             $username = $sanitizedData['username'] ?? null ;
             $firstName = $sanitizedData['firstName'] ?? null ;
@@ -118,7 +120,7 @@ class UserController extends Controller
             echo $this->twig->render('user/login.html.twig', ['errorMessage' => $errorMessage]);
         }
 
-        $sanitizedData = FormSanitizer::sanitize($postData);
+        $sanitizedData = $this->formSanitizer->sanitize($postData);
 
         if (!filter_var($sanitizedData['email'], FILTER_VALIDATE_EMAIL)) {
             $errorMessage = 'Il faut un email valide pour soumettre le formulaire.';

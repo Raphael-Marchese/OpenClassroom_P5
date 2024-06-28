@@ -11,7 +11,7 @@ class FormSanitizer
     /**
      * @throws \Exception
      */
-    public static function sanitize($data): array
+    public function sanitize($data): array
     {
         $sanitizedData = [];
 
