@@ -4,14 +4,16 @@ declare(strict_types=1);
 namespace App\Model\Validator;
 
 use App\Entity\BlogPost;
+use App\Exception\BlogPostException;
 
 /**
- * @implements ValidatorInterface<BlogPost>
+ * @param BlogPost $data
+ * @return array<string, string>
  */
 class PostValidator implements ValidatorInterface
 {
     #[\Override]
-    public function validate($data): array
+    public function validate($data): void
     {
         $errors = [];
 
@@ -29,7 +31,15 @@ class PostValidator implements ValidatorInterface
         if (empty($data->author)) {
             $errors['author'] = 'Vous devez être connecté pour écrire un article';
         }
+        if(count($errors) > 0)
+        {
+            throw new BlogPostException($errors);
 
-        return $errors;
+        }
+    }
+
+    public function supports($object): bool
+    {
+        return $object instanceof BlogPost;
     }
 }

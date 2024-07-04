@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace App\Model\Repository;
 
+use App\Exception\BlogPostException;
 use App\Model\Database;
 use App\Entity\BlogPost;
 use App\Model\Service\PostFactory;
-use DateTime;
 use PDO;
 use PDOStatement;
 
@@ -31,9 +31,9 @@ class PostRepository extends Database
     /**
      * Find one post by id
      * @param int $id
-     * @return BlogPost
+     * @return BlogPost|null
      */
-    public function findById(int $id)
+    public function findById(int $id) : ?BlogPost
     {
         $query = 'SELECT * FROM blog_post WHERE id = :id';
         $statement = $this->connect()->prepare($query);
@@ -52,12 +52,17 @@ class PostRepository extends Database
         return null; // Aucun résultat trouvé
     }
 
+    /**
+     * @param BlogPost $blogPost
+     * @return bool
+     * @throws BlogPostException
+     */
     public function create(BlogPost $blogPost): bool
     {
         $query = 'INSERT INTO blog_post (title, chapo, created_at, updated_at, content, status, author, image) VALUES (:title, :chapo, :createdAt, :updatedAt, :content, :status, :author, :image)';
         $db = $this->connect();
         $statement = $db->prepare($query);
-        $statement->bindValue(':title', $blogPost->title , type: PDO::PARAM_STR);
+        $statement->bindValue(':title', $blogPost->title, type: PDO::PARAM_STR);
         $statement->bindValue(':chapo', $blogPost->chapo, type: PDO::PARAM_STR);
         $statement->bindValue(':createdAt', $blogPost->createdAt->format('Y-m-d H:i:s'), PDO::PARAM_STR);
         $statement->bindValue(':updatedAt', $blogPost->updatedAt?->format('Y-m-d H:i:s'), PDO::PARAM_STR);
@@ -67,16 +72,22 @@ class PostRepository extends Database
         $statement->bindValue(':image', $blogPost->image, type: PDO::PARAM_STR);
 
         if ($statement->execute()) {
-
             $blogPost->id = (int) $db->lastInsertId();
-
             return true;
+        } else {
+            // Vous pouvez enregistrer les erreurs dans un fichier log ou gérer les erreurs de manière appropriée
+            error_log('Erreur lors de l\'insertion de l\'utilisateur: ' . implode(', ', $stmt->errorInfo()));
+            return false;
         }
 
-        error_log('Erreur lors de la création de l\'article: ' . implode(', ', $stmt->errorInfo()));
-        return false;
     }
 
+    /**
+     * @param BlogPost $blogPost
+     * @param int $id
+     * @return bool
+     *
+     */
     public function update(BlogPost $blogPost, int $id): bool
     {
         $query = 'UPDATE blog_post SET title = :title, chapo = :chapo, updated_at = :updatedAt, content = :content, status = :status, image = :image WHERE id = :id';
@@ -90,14 +101,21 @@ class PostRepository extends Database
         $statement->bindValue(':content', $blogPost->content, type: PDO::PARAM_STR);
         $statement->bindValue(':image', $blogPost->image, type: PDO::PARAM_STR);
 
+
         if ($statement->execute()) {
             return true;
         } else {
-            error_log('Erreur lors de la mise à jour de l\'article: ' . implode(', ', $stmt->errorInfo()));
+            // Vous pouvez enregistrer les erreurs dans un fichier log ou gérer les erreurs de manière appropriée
+            error_log('Erreur lors de l\'insertion de l\'utilisateur: ' . implode(', ', $stmt->errorInfo()));
             return false;
         }
     }
 
+    /**
+     * @param int $id
+     * @return bool
+     * @throws bool
+     */
     public function delete(int $id): bool
     {
         $query = 'DELETE FROM blog_post WHERE id = :id';
@@ -108,7 +126,8 @@ class PostRepository extends Database
         if ($statement->execute()) {
             return true;
         } else {
-            error_log('Erreur lors de la mise à jour de l\'article: ' . implode(', ', $stmt->errorInfo()));
+            // Vous pouvez enregistrer les erreurs dans un fichier log ou gérer les erreurs de manière appropriée
+            error_log('Erreur lors de l\'insertion de l\'utilisateur: ' . implode(', ', $stmt->errorInfo()));
             return false;
         }
     }

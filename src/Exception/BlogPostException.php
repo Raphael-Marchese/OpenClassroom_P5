@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Exceptions;
+namespace App\Exception;
 
-class BlogPostCreationException extends \RuntimeException
+class BlogPostException extends \RuntimeException
 {
     public function __construct(public array $validationErrors = [])
     {

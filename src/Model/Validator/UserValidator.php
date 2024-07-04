@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Model\Validator;
 
 use App\Entity\User;
+use App\Exception\UserException;
 
 class UserValidator implements ValidatorInterface
 {
@@ -11,12 +12,12 @@ class UserValidator implements ValidatorInterface
      * @param User $data
      * @return array<string, string>
      */
-    public function validate($data): array
+    public function validate($data): void
     {
         $errors = [];
 
         if (!$data instanceof User) {
-            return [];
+            return;
         }
 
         if (empty($data->username)) {
@@ -32,7 +33,13 @@ class UserValidator implements ValidatorInterface
         if (empty($data->password)) {
             $errors['password'] = 'Le mot de passe est obligatoire.';
         }
+        if (count($errors) > 0) {
+            throw new UserException($errors);
+        }
+    }
 
-        return $errors;
+    public function supports($object): bool
+    {
+        return $object instanceof User;
     }
 }

@@ -3,29 +3,34 @@ declare(strict_types=1);
 
 namespace App\Model\Validator;
 
+use App\Exception\ImageException;
+use App\Model\File\File;
+
+/**
+ * @param File $data
+ * @return array<string, string>
+ */
 class ImageValidator implements ValidatorInterface
 {
-    /**
-     * @param array $data
-     * @return array
-     */
-    public function validate($data): array
+    #[\Override]
+    public function validate($data): void
     {
         $errors = [];
 
         if(!$data) {
-            return $errors;
+            return;
         }
 
-        if($data['size'] === 0 ) {
-            return $errors;
+        if ($data->size === 0)
+        {
+            return;
         }
 
-        if ($data['size'] > 1000000) {
+        if ($data->size > 1000000) {
             $errors['image'] = "L'envoi n'a pas pu être effectué, erreur ou image trop volumineuse (max 10 MO)";
         }
 
-        $fileInfo = pathinfo($data['name']);
+        $fileInfo = pathinfo($data->name);
         $extension = strtolower($fileInfo['extension']);
         $allowedExtensions = ['jpg', 'jpeg', 'gif', 'png'];
         if (!in_array($extension, $allowedExtensions)) {
@@ -37,10 +42,15 @@ class ImageValidator implements ValidatorInterface
             $errors['image'] = "L'envoi n'a pas pu être effectué, le dossier uploads est manquant";
         }
 
-        if (empty($errors)) {
-            move_uploaded_file($data['tmp_name'], $path . basename($data['name']));
-            return $errors;
+        if (count($errors) > 0) {
+            throw new ImageException($errors);
         }
-        return $errors;
+
+        move_uploaded_file($data->tmpName, $path . basename($data->name));
+    }
+
+    public function supports($object): bool
+    {
+        return $object instanceof File;
     }
 }

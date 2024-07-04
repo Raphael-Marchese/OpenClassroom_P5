@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Controllers;
+namespace App\Controller;
 
 use App\Model\Service\UserProvider;
 use Twig\Environment;
@@ -15,7 +15,7 @@ abstract class Controller
 
     public function __construct()
     {
-        $loader = new FilesystemLoader('src/Views');
+        $loader = new FilesystemLoader('src/View');
         $this->twig = new Environment($loader,  ['debug' => true]);
         $this->twig->addExtension(new DebugExtension());
         $this->twig->addExtension(new IntlExtension());

@@ -10,7 +10,10 @@
             <button class="btn btn-danger">Supprimer</button>
         </a>
     </div>
-    <div class=" text-danger m-3"> {{ errors.admin }} </div>
+    {% for error in errors %}
+        <div class=" text-danger m-3"> {{ error }} </div>
+    {% endfor %}
+
 
 
         <!-- Page Content-->

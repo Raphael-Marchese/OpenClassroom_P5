@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Controllers;
+namespace App\Controller;
 
 use App\Entity\User;
 use App\Model\CSRFToken;
 use App\Model\Repository\UserRepository;
-use App\Model\Validator\FormSanitizer;
+use App\Model\Service\FormSanitizer;
 use App\Model\Validator\UserValidator;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;

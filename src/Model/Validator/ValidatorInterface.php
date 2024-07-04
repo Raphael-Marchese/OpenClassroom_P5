@@ -9,8 +9,10 @@ interface ValidatorInterface
 {
     /**
      * @param T $data
-     * @return array<string, string>
+     * @return void
      */
-    public function validate($data): array;
+    public function validate($data): void;
+
+    public function supports($object): bool;
 
 }

@@ -1,9 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Model\Validator;
-
-use App\Model\CSRFToken;
+namespace App\Model\Service;
 
 class FormSanitizer
 {

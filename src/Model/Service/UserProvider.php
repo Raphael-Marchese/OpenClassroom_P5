@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Model\Service;
 
 use App\Entity\User;
-use App\Exceptions\AccessDeniedException;
+use App\Exception\UserNotFoundException;
 use App\Model\Repository\UserRepository;
 
 class UserProvider
@@ -22,7 +22,8 @@ class UserProvider
         $user = $this->userRepository->findById($userId);
 
         if (null === $user) {
-            throw new AccessDeniedException();
+            $errors['userNotFound'] = 'User not found';
+            throw new UserNotFoundException($errors);
         }
 
         return $user;
