@@ -32,4 +32,4 @@ ALTER TABLE `blog_post` ADD FOREIGN KEY (`author`) REFERENCES `user` (`id`);
 
 ALTER TABLE `comment` ADD FOREIGN KEY (`author`) REFERENCES `user` (`id`);
 
-ALTER TABLE `comment` ADD FOREIGN KEY (`post`) REFERENCES `blog_post` (`id`);
+ALTER TABLE `comment` ADD CONSTRAINT comment_ibfk_2 FOREIGN KEY (`post`) REFERENCES `blog_post` (`id`) ON DELETE CASCADE;
