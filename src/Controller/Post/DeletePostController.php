@@ -45,7 +45,7 @@ class DeletePostController extends Controller
         }
 
         try {
-            $this->adminChecker->checkAdmin($user);
+            $this->adminChecker->isAdmin($user);
             $this->postRepository->delete($id);
             echo $this->twig->render('homepage/homepage.html.twig');
             return;

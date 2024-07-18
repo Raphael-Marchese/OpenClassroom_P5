@@ -34,6 +34,7 @@ class LoginController extends Controller
 
     public function login(): void
     {
+
         echo $this->twig->render('user/login.html.twig');
     }
 

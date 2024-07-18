@@ -8,7 +8,7 @@ use App\Exception\AccessDeniedException;
 
 class AdminChecker
 {
-    public function checkAdmin($data): void
+    public function isAdmin($data): void
     {
         $errors = [];
         if ($data->role !== 'ROLE_ADMIN') {

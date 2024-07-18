@@ -61,7 +61,7 @@ class CreatePostController extends Controller
         }
 
         try {
-            $this->adminChecker->checkAdmin($user);
+            $this->adminChecker->isAdmin($user);
         } catch (AccessDeniedException $e) {
             $errors = $e->validationErrors;
             echo $this->twig->render('homepage/homepage.html.twig', [
