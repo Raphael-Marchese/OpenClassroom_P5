@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Controller\User;
@@ -15,8 +16,11 @@ use Twig\Error\SyntaxError;
 class LoginController extends Controller
 {
     private UserRepository $repository;
+
     private FormSanitizer $formSanitizer;
+
     private UserValidator $userValidator;
+
     private CSRFToken $token;
 
     public function __construct()
@@ -40,12 +44,11 @@ class LoginController extends Controller
      */
     public function submitLogin(): void
     {
-
-        if($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
         $postData = $_POST;
-        if (!isset($postData['email']) ||  !isset($postData['password'])) {
+        if (!isset($postData['email']) || !isset($postData['password'])) {
             $errorMessage = 'Vous devez renseigner un email et un mot de passe.';
             echo $this->twig->render('user/login.html.twig', ['errorMessage' => $errorMessage]);
         }
@@ -60,12 +63,13 @@ class LoginController extends Controller
         $user = $this->repository->findByEmail($sanitizedData['email']);
 
         if ($user['email'] === $sanitizedData['email'] &&
-            password_verify($sanitizedData['password'],$user['password'])
+            password_verify($sanitizedData['password'], $user['password'])
         ) {
             $_SESSION['LOGGED_USER'] = [
                 'email' => $user['email'],
                 'user_id' => $user['id'],
                 'username' => $user['username'],
+                'role' => $user['role'],
             ];
             $this->twig->addGlobal('session', $_SESSION['LOGGED_USER']);
             echo $this->twig->render('homepage/homepage.html.twig');

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Controller\User;
@@ -16,8 +17,11 @@ use Twig\Error\SyntaxError;
 class UserController extends Controller
 {
     private UserRepository $repository;
+
     private FormSanitizer $formSanitizer;
+
     private UserValidator $userValidator;
+
     private CSRFToken $token;
 
     public function __construct()
@@ -47,62 +51,71 @@ class UserController extends Controller
     public function submitRegister(): void
     {
         $csrfCheck = 'register';
-        if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['csrf_token'])) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['csrf_token'])) {
             $sanitizedData = $this->formSanitizer->sanitize($_POST);
             $token = $sanitizedData['csrf_token'];
-            $username = $sanitizedData['username'] ?? null ;
-            $firstName = $sanitizedData['firstName'] ?? null ;
-            $lastName = $sanitizedData['lastName'] ?? null ;
-            $email = $sanitizedData['email'] ?? null ;
-            $plainPassword = $sanitizedData['password'] ?? null ;
+            $username = $sanitizedData['username'] ?? null;
+            $firstName = $sanitizedData['firstName'] ?? null;
+            $lastName = $sanitizedData['lastName'] ?? null;
+            $email = $sanitizedData['email'] ?? null;
+            $plainPassword = $sanitizedData['password'] ?? null;
         }
 
         $password = $plainPassword ? password_hash($plainPassword, PASSWORD_DEFAULT) : $plainPassword;
 
-        $user = new User(firstName: $firstName, lastName: $lastName, username: $username, email: $email, password: $password, role: "['ROLE_USER']");
+        $user = new User(
+            firstName: $firstName,
+            lastName: $lastName,
+            username: $username,
+            email: $email,
+            password: $password,
+            role: "['ROLE_USER']"
+        );
 
 
-        $validationErrors = array_merge($this->userValidator->validate($user), $this->token->validateToken($token, $csrfCheck));
+        $validationErrors = array_merge(
+            $this->userValidator->validate($user),
+            $this->token->validateToken($token, $csrfCheck)
+        );
 
-            if (count($validationErrors) === 0) {
-                $this->repository->save($user);
-                try {
-                    echo $this->twig->render('user/success.html.twig');
-                } catch (LoaderError|RuntimeError|SyntaxError $e) {
-                    echo $this->twig->render('user/register.html.twig', [
-                        'twigError' => $e,
-                        'formData' => [
-                            'username' => $username,
-                            'firstName' => $firstName,
-                            'lastName' => $lastName,
-                            'email' => $email
-                        ]
-                    ]);
-                }
-            } else {
-                try {
-                    echo $this->twig->render('user/register.html.twig', [
-                        'errors' => $validationErrors,
-                        'formData' => [
-                            'username' => $username,
-                            'firstName' => $firstName,
-                            'lastName' => $lastName,
-                            'email' => $email
-                            ]
-                        ]);
-                } catch (LoaderError|RuntimeError|SyntaxError $e) {
-                    echo $this->twig->render('user/register.html.twig', [
-                        'twigError' => $e,
-                        'formData' => [
-                            'username' => $username,
-                            'firstName' => $firstName,
-                            'lastName' => $lastName,
-                            'email' => $email
-                        ]
-                    ]);
-                }
+        if (count($validationErrors) === 0) {
+            $this->repository->save($user);
+            try {
+                echo $this->twig->render('user/success.html.twig');
+            } catch (LoaderError|RuntimeError|SyntaxError $e) {
+                echo $this->twig->render('user/register.html.twig', [
+                    'twigError' => $e,
+                    'formData' => [
+                        'username' => $username,
+                        'firstName' => $firstName,
+                        'lastName' => $lastName,
+                        'email' => $email
+                    ]
+                ]);
             }
+        } else {
+            try {
+                echo $this->twig->render('user/register.html.twig', [
+                    'errors' => $validationErrors,
+                    'formData' => [
+                        'username' => $username,
+                        'firstName' => $firstName,
+                        'lastName' => $lastName,
+                        'email' => $email
+                    ]
+                ]);
+            } catch (LoaderError|RuntimeError|SyntaxError $e) {
+                echo $this->twig->render('user/register.html.twig', [
+                    'twigError' => $e,
+                    'formData' => [
+                        'username' => $username,
+                        'firstName' => $firstName,
+                        'lastName' => $lastName,
+                        'email' => $email
+                    ]
+                ]);
+            }
+        }
     }
 
 }
-

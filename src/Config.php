@@ -4,7 +4,8 @@ namespace App;
 
 include 'config.php';
 
-class Config {
+class Config
+{
     const BASE_DIRECTORY = BASE_DIRECTORY;
     const VIEW_DIRECTORY = VIEW_DIRECTORY;
     const MODEL_DIRECTORY = MODEL_DIRECTORY;

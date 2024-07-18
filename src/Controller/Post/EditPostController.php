@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Controller\Post;
@@ -49,12 +50,12 @@ class EditPostController extends Controller
     public function postEditForm($id): void
     {
         $post = $this->postRepository->findById($id);
-        if($post === null) {
+        if ($post === null) {
             return;
         }
 
         try {
-           $this->userProvider->getUser();
+            $this->userProvider->getUser();
         } catch (UserNotFoundException) {
             header('location: /login');
             return;
@@ -76,7 +77,7 @@ class EditPostController extends Controller
     {
         $csrfCheck = 'editPost';
 
-        if($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
 
@@ -95,8 +96,7 @@ class EditPostController extends Controller
             $token = $sanitizedData['csrf_token'];
 
             $this->token->validateToken($token, $csrfCheck);
-
-        } catch ( CSRFTokenException $e) {
+        } catch (CSRFTokenException $e) {
             $validationErrors = $e->validationErrors;
 
             echo $this->twig->render('post/edit.html.twig', [
@@ -113,19 +113,18 @@ class EditPostController extends Controller
             $post->updatedAt = new \DateTime();
             $oldPost = $this->postRepository->findById((int)$id);
 
-            if($_FILES['image']['size'] === 0)
-            {
+            if ($_FILES['image']['size'] === 0) {
                 $post->image = $oldPost?->image;
             }
 
             $this->authorChecker->checkAuthor($post);
 
-            $this->postRepository->update($post, (int) $id);
+            $this->postRepository->update($post, (int)$id);
 
             header(sprintf('Location: /post/%s', $id));
             ob_end_flush();
             return;
-        } catch (ImageException | BlogPostException| AccessDeniedException $e) {
+        } catch (ImageException|BlogPostException|AccessDeniedException $e) {
             $validationErrors = $e->validationErrors;
 
             ob_end_clean();

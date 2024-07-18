@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Model\Repository;
@@ -33,7 +34,7 @@ class PostRepository extends Database
      * @param int $id
      * @return BlogPost|null
      */
-    public function findById(int $id) : ?BlogPost
+    public function findById(int $id): ?BlogPost
     {
         $query = 'SELECT * FROM blog_post WHERE id = :id';
         $statement = $this->connect()->prepare($query);
@@ -72,14 +73,13 @@ class PostRepository extends Database
         $statement->bindValue(':image', $blogPost->image, type: PDO::PARAM_STR);
 
         if ($statement->execute()) {
-            $blogPost->id = (int) $db->lastInsertId();
+            $blogPost->id = (int)$db->lastInsertId();
             return true;
         } else {
             // Vous pouvez enregistrer les erreurs dans un fichier log ou gérer les erreurs de manière appropriée
             error_log('Erreur lors de l\'insertion de l\'utilisateur: ' . implode(', ', $stmt->errorInfo()));
             return false;
         }
-
     }
 
     /**
@@ -94,7 +94,7 @@ class PostRepository extends Database
         $db = $this->connect();
         $statement = $db->prepare($query);
         $statement->bindValue(':id', $id, PDO::PARAM_INT);
-        $statement->bindValue(':title', $blogPost->title , type: PDO::PARAM_STR);
+        $statement->bindValue(':title', $blogPost->title, type: PDO::PARAM_STR);
         $statement->bindValue(':chapo', $blogPost->chapo, type: PDO::PARAM_STR);
         $statement->bindValue(':updatedAt', $blogPost->updatedAt->format('Y-m-d H:i:s'), PDO::PARAM_STR);
         $statement->bindValue(':status', $blogPost->status, type: PDO::PARAM_STR);

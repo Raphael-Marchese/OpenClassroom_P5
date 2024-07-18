@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Model\Repository;
@@ -15,6 +16,7 @@ class UserRepository extends Database
     {
         return $this->connect()->query('SELECT * FROM user ORDER BY id ASC');
     }
+
     public function save(User $user): bool
     {
         $query = 'INSERT INTO user (username, first_name, last_name, email, password, role) VALUES (:username, :firstName, :lastName, :email, :password, :role)';
@@ -36,7 +38,7 @@ class UserRepository extends Database
         }
     }
 
-    public function findByEmail(string $email): bool | null |array
+    public function findByEmail(string $email): bool|null|array
     {
         $query = 'SELECT * FROM user WHERE email = :email';
         $statement = $this->connect()->prepare($query);

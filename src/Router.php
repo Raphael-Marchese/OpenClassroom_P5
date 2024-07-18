@@ -20,11 +20,16 @@ class Router
     public function __construct()
     {
         $this->routes = [
-            '/' => [HomeController::class, 'render'], // Route pour /
-            '/list' => [GetPostController::class, 'getCollection'], // Route pour /list
-            '/post/create' => [CreatePostController::class, 'createPostForm'], // Route pour /post/create
-            '/post/create/submit' => [CreatePostController::class, 'createPost'], // Route pour /soumettre la création d'un post
-            '/post/(\d+)' => [GetPostController::class, 'getPost'], // Route pour /post/id
+            '/' => [HomeController::class, 'render'],
+            // Route pour /
+            '/list' => [GetPostController::class, 'getCollection'],
+            // Route pour /list
+            '/post/create' => [CreatePostController::class, 'createPostForm'],
+            // Route pour /post/create
+            '/post/create/submit' => [CreatePostController::class, 'createPost'],
+            // Route pour /soumettre la création d'un post
+            '/post/(\d+)' => [GetPostController::class, 'getPost'],
+            // Route pour /post/id
             '/post/(\d+)/edit' => [EditPostController::class, 'postEditForm'],
             '/post/(\d+)/edit/submit' => [EditPostController::class, 'postEdit'],
             '/post/(\d+)/delete' => [DeletePostController::class, 'deletePost'],
@@ -45,10 +50,9 @@ class Router
      */
     public function callController(string $path): void
     {
-        foreach($this->routes as $route => $controller) {
+        foreach ($this->routes as $route => $controller) {
             if ($path === $route) {
-
-                $controllerClass =  $controller[0];
+                $controllerClass = $controller[0];
                 $method = $controller[1];
                 $controllerInstance = new $controllerClass();
                 $controllerInstance->$method();
@@ -59,7 +63,7 @@ class Router
                 $controllerClass = $controller[0];
                 $method = $controller[1];
                 $controllerInstance = new $controllerClass();
-                $pathId = (int) $matches[1];
+                $pathId = (int)$matches[1];
                 $controllerInstance->$method($pathId);
                 return;
             }

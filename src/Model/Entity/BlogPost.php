@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Model\Entity;
@@ -17,8 +18,7 @@ class BlogPost
         public User $author,
         public ?string $image,
         public ?\DateTimeInterface $updatedAt = null,
-    )
-    {
+    ) {
     }
 
 }

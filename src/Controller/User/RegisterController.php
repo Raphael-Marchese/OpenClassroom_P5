@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Controller\User;
@@ -18,7 +19,9 @@ use Twig\Error\SyntaxError;
 class RegisterController extends Controller
 {
     private UserRepository $repository;
+
     private FormSanitizer $formSanitizer;
+
     private CSRFToken $token;
 
     private UserExtractor $userExtractor;
@@ -52,7 +55,7 @@ class RegisterController extends Controller
     {
         $csrfCheck = 'register';
 
-        if($_SERVER['REQUEST_METHOD'] !== 'POST' ) {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
 
@@ -70,18 +73,17 @@ class RegisterController extends Controller
             $this->repository->save($user);
 
             echo $this->twig->render('user/success.html.twig');
-            } catch (UserException | CSRFTokenException $e) {
-                echo $this->twig->render('user/register.html.twig', [
-                    'errors' => $e->validationErrors,
-                    'formData' => [
-                        'username' => $user->username,
-                        'firstName' => $user->firstName,
-                        'lastName' => $user->lastName,
-                        'email' => $user->email,
-                        'role' => $user->role
-                    ]
-                ]);
-            } catch (\Exception $e) {
+        } catch (UserException|CSRFTokenException $e) {
+            echo $this->twig->render('user/register.html.twig', [
+                'errors' => $e->validationErrors,
+                'formData' => [
+                    'username' => $user->username,
+                    'firstName' => $user->firstName,
+                    'lastName' => $user->lastName,
+                    'email' => $user->email,
+                ]
+            ]);
+        } catch (\Exception $e) {
             echo $this->twig->render('user/register.html.twig', [
                 'otherError' => $e->getMessage(),
                 'formData' => [

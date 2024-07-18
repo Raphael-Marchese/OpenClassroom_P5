@@ -13,8 +13,8 @@ class HomeController extends Controller
      * @throws RuntimeError
      * @throws LoaderError
      */
-    public function render():void
+    public function render(): void
     {
-       echo $this->twig->render('homepage/homepage.html.twig');
+        echo $this->twig->render('homepage/homepage.html.twig');
     }
 }

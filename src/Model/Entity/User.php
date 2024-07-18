@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Model\Entity;
@@ -12,7 +13,8 @@ class User
         public string $email,
         public string $password,
         public string $role
-    ) {}
+    ) {
+    }
 
     public readonly int $id;
 

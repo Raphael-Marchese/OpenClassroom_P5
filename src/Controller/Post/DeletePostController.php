@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Controller\Post;
@@ -16,8 +17,11 @@ use Twig\Error\SyntaxError;
 class DeletePostController extends Controller
 {
     private PostRepository $postRepository;
+
     private UserProvider $userProvider;
+
     private AdminChecker $adminChecker;
+
     public function __construct()
     {
         parent::__construct();
@@ -45,8 +49,7 @@ class DeletePostController extends Controller
             $this->postRepository->delete($id);
             echo $this->twig->render('homepage/homepage.html.twig');
             return;
-
-        } catch (AccessDeniedException $e){
+        } catch (AccessDeniedException $e) {
             $validationErrors = $e->validationErrors;
             $post = $this->postRepository->findById($id);
             echo $this->twig->render('post/post.html.twig', ['post' => $post, 'errors' => $validationErrors]);

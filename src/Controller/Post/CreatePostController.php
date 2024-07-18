@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Controller\Post;
@@ -41,7 +42,7 @@ class CreatePostController extends Controller
     {
         parent::__construct();
         $this->postRepository = new PostRepository();
-        $this->userProvider =  new UserProvider();
+        $this->userProvider = new UserProvider();
         $this->postExtractor = new PostExtractor();
         $this->imageFactory = new ImageFactory();
         $this->formSanitizer = new FormSanitizer();
@@ -49,7 +50,7 @@ class CreatePostController extends Controller
         $this->adminChecker = new AdminChecker();
     }
 
-    public function createPostForm():void
+    public function createPostForm(): void
     {
         try {
             $user = $this->userProvider->getUser();
@@ -72,10 +73,10 @@ class CreatePostController extends Controller
         echo $this->twig->render('post/create.html.twig', ['csrf_token' => $csrfToken]);
     }
 
-    public function createPost():void
+    public function createPost(): void
     {
         $csrfCheck = 'createPost';
-        if($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
 
@@ -90,7 +91,7 @@ class CreatePostController extends Controller
             $image = $this->imageFactory->createImage($_FILES['image']);
 
             $sanitizedData = $this->formSanitizer->sanitize($_POST);
-            $token =$sanitizedData['csrf_token'];
+            $token = $sanitizedData['csrf_token'];
 
             $this->token->validateToken($token, $csrfCheck);
             ValidatorFactory::validate($image);
@@ -103,8 +104,7 @@ class CreatePostController extends Controller
 
             header(sprintf('location: /post/%s', $post->id));
             return;
-
-        } catch (ImageException | CSRFTokenException | BlogPostException $e) {
+        } catch (ImageException|CSRFTokenException|BlogPostException $e) {
             $errors = $e->validationErrors;
 
             echo $this->twig->render('post/create.html.twig', [
@@ -115,7 +115,7 @@ class CreatePostController extends Controller
                     'content' => $post->content,
                 ]
             ]);
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             $error = $e->getMessage();
             echo $this->twig->render('post/create.html.twig', [
                 'otherError' => $error,

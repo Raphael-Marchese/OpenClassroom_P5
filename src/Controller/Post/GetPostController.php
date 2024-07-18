@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Controller\Post;
@@ -25,7 +26,7 @@ class GetPostController extends Controller
      * @throws RuntimeError
      * @throws LoaderError
      */
-    public function getCollection():void
+    public function getCollection(): void
     {
         $posts = $this->postRepository->findAll();
 
@@ -40,7 +41,7 @@ class GetPostController extends Controller
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    public function getPost(int $id):void
+    public function getPost(int $id): void
     {
         $post = $this->postRepository->findById($id);
 
