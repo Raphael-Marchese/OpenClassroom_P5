@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Model\Repository;
 
+use App\Exception\DatabaseException;
 use Database\Database;
-use App\Exception\BlogPostException;
 use App\Model\Entity\BlogPost;
 use App\Service\PostFactory;
-use RuntimeException;
 use PDO;
 use PDOStatement;
 
@@ -24,13 +23,14 @@ class PostRepository extends Database
     /**
      * Return all posts
      * @return bool|PDOStatement
+     * @throws DatabaseException
      */
     public function findAll(): bool|PDOStatement
     {
         $result = $this->connect()->query('SELECT * FROM blog_post ORDER BY updated_at ASC');
 
         if ($result === false) {
-            throw new \RuntimeException('le chargement a échoué');
+            throw new DatabaseException('le chargement a échoué');
         }
 
         return $result;
@@ -64,7 +64,7 @@ class PostRepository extends Database
     /**
      * @param BlogPost $blogPost
      * @return bool
-     * @throws BlogPostException
+     * @throws DatabaseException
      */
     public function create(BlogPost $blogPost): bool
     {
@@ -81,7 +81,7 @@ class PostRepository extends Database
         $statement->bindValue(':image', $blogPost->image, type: PDO::PARAM_STR);
 
         if (!$statement->execute()) {
-            throw new RuntimeException('erreur BDD lors de la création du post');
+            throw new DatabaseException('erreur BDD lors de la création du post');
         }
 
         $blogPost->id = (int)$db->lastInsertId();
@@ -110,7 +110,7 @@ class PostRepository extends Database
 
 
         if (!$statement->execute()) {
-            throw new RuntimeException('erreur BDD lors de la mise à jour du post');
+            throw new DatabaseException('erreur BDD lors de la mise à jour du post');
         }
 
         return true;
@@ -119,7 +119,7 @@ class PostRepository extends Database
     /**
      * @param int $id
      * @return bool
-     * @throws bool
+     * @throws bool|DatabaseException
      */
     public function delete(int $id): bool
     {
@@ -129,7 +129,7 @@ class PostRepository extends Database
         $statement->bindValue(':id', $id, PDO::PARAM_INT);
 
         if (!$statement->execute()) {
-            throw new RuntimeException('erreur BDD lors de la suppression du post');
+            throw new DatabaseException('erreur BDD lors de la suppression du post');
         }
 
         return true;

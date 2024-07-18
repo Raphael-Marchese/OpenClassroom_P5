@@ -6,6 +6,7 @@ namespace App\Controller\User;
 
 use App\Controller\Controller;
 use App\Exception\CSRFTokenException;
+use App\Exception\DatabaseException;
 use App\Exception\UserException;
 use App\Model\CSRFToken;
 use App\Model\Repository\UserRepository;
@@ -83,7 +84,7 @@ class RegisterController extends Controller
                     'email' => $user->email,
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Exception|DatabaseException $e) {
             echo $this->twig->render('user/register.html.twig', [
                 'otherError' => $e->getMessage(),
                 'formData' => [

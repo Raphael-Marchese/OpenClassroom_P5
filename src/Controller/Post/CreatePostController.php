@@ -8,6 +8,7 @@ use App\Controller\Controller;
 use App\Exception\AccessDeniedException;
 use App\Exception\BlogPostException;
 use App\Exception\CSRFTokenException;
+use App\Exception\DatabaseException;
 use App\Exception\ImageException;
 use App\Exception\UserNotFoundException;
 use App\Model\CSRFToken;
@@ -115,7 +116,7 @@ class CreatePostController extends Controller
                     'content' => $post->content,
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (\Exception|DatabaseException $e) {
             $error = $e->getMessage();
             echo $this->twig->render('post/create.html.twig', [
                 'otherError' => $error,

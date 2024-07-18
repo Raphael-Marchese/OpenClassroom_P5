@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Model\Repository;
 
+use App\Exception\DatabaseException;
 use Database\Database;
 use App\Model\Entity\User;
 
 use PDO;
 use PDOStatement;
-use RuntimeException;
 
 class UserRepository extends Database
 {
@@ -18,7 +18,7 @@ class UserRepository extends Database
         $result = $this->connect()->query('SELECT * FROM user ORDER BY id ASC');
 
         if ($result === false) {
-            throw new \RuntimeException('le chargement a échoué');
+            throw new DatabaseException('le chargement a échoué');
         }
 
         return $result;
@@ -37,7 +37,7 @@ class UserRepository extends Database
 
 
         if (!$statement->execute()) {
-            throw new RuntimeException('Erreur lors de la création du compte');
+            throw new DatabaseException('Erreur lors de la création du compte');
         }
 
         return true;
