@@ -8,6 +8,7 @@ use Database\Database;
 use App\Exception\BlogPostException;
 use App\Model\Entity\BlogPost;
 use App\Service\PostFactory;
+use RuntimeException;
 use PDO;
 use PDOStatement;
 
@@ -26,7 +27,13 @@ class PostRepository extends Database
      */
     public function findAll(): bool|PDOStatement
     {
-        return $this->connect()->query('SELECT * FROM blog_post ORDER BY updated_at ASC');
+        $result = $this->connect()->query('SELECT * FROM blog_post ORDER BY updated_at ASC');
+
+        if ($result === false) {
+            throw new \RuntimeException('le chargement a échoué');
+        }
+
+        return $result;
     }
 
     /**
@@ -44,13 +51,14 @@ class PostRepository extends Database
         $result = $statement->fetch(PDO::FETCH_ASSOC);
 
         // Vérifier s'il y a des résultats
-        if ($result !== false) {
-            $blogPost = $this->postFactory->createBlogPost($result);
-            $blogPost->id = $result['id'];
-            return $blogPost;
+        if ($result === false) {
+            return null; // Aucun résultat trouvé
         }
 
-        return null; // Aucun résultat trouvé
+        $blogPost = $this->postFactory->createBlogPost($result);
+        $blogPost->id = $result['id'];
+
+        return $blogPost;
     }
 
     /**
@@ -72,14 +80,13 @@ class PostRepository extends Database
         $statement->bindValue(':author', $blogPost->author->id, type: PDO::PARAM_INT);
         $statement->bindValue(':image', $blogPost->image, type: PDO::PARAM_STR);
 
-        if ($statement->execute()) {
-            $blogPost->id = (int)$db->lastInsertId();
-            return true;
-        } else {
-            // Vous pouvez enregistrer les erreurs dans un fichier log ou gérer les erreurs de manière appropriée
-            error_log('Erreur lors de l\'insertion de l\'utilisateur: ' . implode(', ', $stmt->errorInfo()));
-            return false;
+        if (!$statement->execute()) {
+            throw new RuntimeException('erreur BDD lors de la création du post');
         }
+
+        $blogPost->id = (int)$db->lastInsertId();
+
+        return true;
     }
 
     /**
@@ -102,13 +109,11 @@ class PostRepository extends Database
         $statement->bindValue(':image', $blogPost->image, type: PDO::PARAM_STR);
 
 
-        if ($statement->execute()) {
-            return true;
-        } else {
-            // Vous pouvez enregistrer les erreurs dans un fichier log ou gérer les erreurs de manière appropriée
-            error_log('Erreur lors de l\'insertion de l\'utilisateur: ' . implode(', ', $stmt->errorInfo()));
-            return false;
+        if (!$statement->execute()) {
+            throw new RuntimeException('erreur BDD lors de la mise à jour du post');
         }
+
+        return true;
     }
 
     /**
@@ -123,13 +128,10 @@ class PostRepository extends Database
         $statement = $db->prepare($query);
         $statement->bindValue(':id', $id, PDO::PARAM_INT);
 
-        if ($statement->execute()) {
-            return true;
-        } else {
-            // Vous pouvez enregistrer les erreurs dans un fichier log ou gérer les erreurs de manière appropriée
-            error_log('Erreur lors de l\'insertion de l\'utilisateur: ' . implode(', ', $stmt->errorInfo()));
-            return false;
+        if (!$statement->execute()) {
+            throw new RuntimeException('erreur BDD lors de la suppression du post');
         }
-    }
 
+        return true;
+    }
 }

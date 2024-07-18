@@ -9,12 +9,19 @@ use App\Model\Entity\User;
 
 use PDO;
 use PDOStatement;
+use RuntimeException;
 
 class UserRepository extends Database
 {
     public function findAll(): bool|PDOStatement
     {
-        return $this->connect()->query('SELECT * FROM user ORDER BY id ASC');
+        $result = $this->connect()->query('SELECT * FROM user ORDER BY id ASC');
+
+        if ($result === false) {
+            throw new \RuntimeException('le chargement a échoué');
+        }
+
+        return $result;
     }
 
     public function save(User $user): bool
@@ -29,13 +36,11 @@ class UserRepository extends Database
         $statement->bindValue(':role', 'ROLE_USER');
 
 
-        if ($statement->execute()) {
-            return true;
-        } else {
-            // Vous pouvez enregistrer les erreurs dans un fichier log ou gérer les erreurs de manière appropriée
-            error_log('Erreur lors de l\'insertion de l\'utilisateur: ' . implode(', ', $stmt->errorInfo()));
-            return false;
+        if (!$statement->execute()) {
+            throw new RuntimeException('Erreur lors de la création du compte');
         }
+
+        return true;
     }
 
     public function findByEmail(string $email): bool|null|array
@@ -47,12 +52,12 @@ class UserRepository extends Database
 
         $result = $statement->fetch(PDO::FETCH_ASSOC);
 
-        // Vérifier s'il y a des résultats
-        if ($result !== false) {
-            return $result;
+        // Vérifier s'il n'y a aucun résultat
+        if ($result === false) {
+            return null;
         }
 
-        return null; // Aucun résultat trouvé
+        return $result; // Renvoie les résultats
     }
 
     public function findById(?int $id): ?User
@@ -64,20 +69,22 @@ class UserRepository extends Database
 
         $result = $statement->fetch(PDO::FETCH_ASSOC);
 
-        // Vérifier s'il y a des résultats
-        if ($result !== false) {
-            $user = new User(
-                $result['first_name'],
-                $result['last_name'],
-                $result['username'],
-                $result['email'],
-                $result['password'],
-                $result['role']
-            );
-            $user->setId($result['id']);
-            return $user;
+        if ($result === false) {
+            return null;
         }
 
-        return null; // Aucun résultat trouvé
+        // S'il y a un résultat
+        $user = new User(
+            $result['first_name'],
+            $result['last_name'],
+            $result['username'],
+            $result['email'],
+            $result['password'],
+            $result['role']
+        );
+
+        $user->setId($result['id']);
+
+        return $user;
     }
 }
