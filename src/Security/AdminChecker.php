@@ -11,7 +11,7 @@ class AdminChecker
     {
         $errors = [];
         if ($data->role !== 'ROLE_ADMIN') {
-            $errors['admin'] = "Vous ne pouvez pas supprimer d'articles si vous n'êtes pas administrateur de ce site";
+            $errors['admin'] = "Seuls les administrateurs ont accès à cette fonctionnalité";
             throw new AccessDeniedException($errors);
         }
     }

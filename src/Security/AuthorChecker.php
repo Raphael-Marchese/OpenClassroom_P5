@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Security;
 
 use App\Exception\AccessDeniedException;
-use App\Model\Service\UserProvider;
+use App\Service\UserProvider;
 
 class AuthorChecker
 {

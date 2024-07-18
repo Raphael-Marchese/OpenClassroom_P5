@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace App\Model\Repository;
 
+use Database\Database;
 use App\Exception\BlogPostException;
-use App\Model\Database;
-use App\Entity\BlogPost;
-use App\Model\Service\PostFactory;
+use App\Model\Entity\BlogPost;
+use App\Service\PostFactory;
 use PDO;
 use PDOStatement;
 

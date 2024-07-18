@@ -7,7 +7,7 @@ use App\Controller\Controller;
 use App\Exception\AccessDeniedException;
 use App\Exception\UserNotFoundException;
 use App\Model\Repository\PostRepository;
-use App\Model\Service\UserProvider;
+use App\Service\UserProvider;
 use App\Security\AdminChecker;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;

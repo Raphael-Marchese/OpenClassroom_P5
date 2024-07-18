@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Model\Service;
+namespace App\Service;
 
 class FormSanitizer
 {

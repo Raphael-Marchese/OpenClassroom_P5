@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace App\Exception;
 
-class UserException extends \RuntimeException
+class UserException extends \Exception
 {
-    public function __construct(public array $errors = [])
+    public function __construct(public array $validationErrors = [])
     {
         parent::__construct('', 0, null);
     }

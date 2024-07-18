@@ -6,36 +6,44 @@ namespace App\Controller\Post;
 use App\Controller\Controller;
 use App\Exception\AccessDeniedException;
 use App\Exception\BlogPostException;
+use App\Exception\CSRFTokenException;
 use App\Exception\ImageException;
 use App\Exception\UserNotFoundException;
+use App\Model\CSRFToken;
 use App\Model\Repository\PostRepository;
-use App\Model\Service\FormSanitizer;
-use App\Model\Service\ImageFactory;
-use App\Model\Service\PostExtractor;
-use App\Model\Service\UserProvider;
-use App\Model\Validator\PostValidator;
+use App\Service\FormSanitizer;
+use App\Service\ImageFactory;
+use App\Service\PostExtractor;
+use App\Service\UserProvider;
 use App\Model\Validator\ValidatorFactory;
 use App\Security\AuthorChecker;
 
 class EditPostController extends Controller
 {
     private PostRepository $postRepository;
+
     private UserProvider $userProvider;
+
     private FormSanitizer $sanitizer;
+
     private PostExtractor $postExtractor;
+
     private AuthorChecker $authorChecker;
-    private ValidatorFactory $validatorFactory;
+
     private ImageFactory $imageFactory;
+
+    private CSRFToken $token;
+
     public function __construct()
     {
         parent::__construct();
         $this->postRepository = new PostRepository();
         $this->userProvider = new UserProvider();
-        $this->validatorFactory = new ValidatorFactory();
         $this->sanitizer = new FormSanitizer();
         $this->postExtractor = new PostExtractor();
         $this->authorChecker = new AuthorChecker();
         $this->imageFactory = new ImageFactory();
+        $this->token = new CSRFToken();
     }
 
     public function postEditForm($id): void
@@ -46,7 +54,7 @@ class EditPostController extends Controller
         }
 
         try {
-            $user = $this->userProvider->getUser();
+           $this->userProvider->getUser();
         } catch (UserNotFoundException) {
             header('location: /login');
             return;
@@ -59,11 +67,15 @@ class EditPostController extends Controller
             echo $this->twig->render('post/post.html.twig', ['post' => $post, 'errors' => $errors]);
         }
 
-        echo $this->twig->render('post/edit.html.twig', ['post' => $post]);
+        $csrfToken = $this->token->generateToken('editPost');
+
+        echo $this->twig->render('post/edit.html.twig', ['post' => $post, 'csrf_token' => $csrfToken]);
     }
 
     public function postEdit(): void
     {
+        $csrfCheck = 'editPost';
+
         if($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
@@ -80,11 +92,22 @@ class EditPostController extends Controller
         $id = $sanitizedData['id'];
 
         try {
-            $image = $this->imageFactory->createImage($_FILES['image']);
+            $token = $sanitizedData['csrf_token'];
+
+            $this->token->validateToken($token, $csrfCheck);
+
+        } catch ( CSRFTokenException $e) {
+            $validationErrors = $e->validationErrors;
+
+            echo $this->twig->render('post/edit.html.twig', [
+                'errors' => $validationErrors,
+            ]);
+        }
+        $image = $this->imageFactory->createImage($_FILES['image']);
+        $post = $this->postExtractor->extractBlogPost($user, $_POST, $image);
+
+        try {
             ValidatorFactory::validate($image);
-
-            $post = $this->postExtractor->extractBlogPost($user, $_POST, $image);
-
             ValidatorFactory::validate($post);
 
             $post->updatedAt = new \DateTime();
@@ -95,43 +118,20 @@ class EditPostController extends Controller
                 $post->image = $oldPost?->image;
             }
 
-            if($user->id !== $post->author->id)
-            {
-                throw new AccessDeniedException();
-            }
+            $this->authorChecker->checkAuthor($post);
 
             $this->postRepository->update($post, (int) $id);
 
-            header(sprintf('location: /post/%s', $id));
+            header(sprintf('Location: /post/%s', $id));
+            ob_end_flush();
             return;
-
-        } catch (BlogPostException $e) {
+        } catch (ImageException | BlogPostException| AccessDeniedException $e) {
             $validationErrors = $e->validationErrors;
+
+            ob_end_clean();
 
             echo $this->twig->render('post/edit.html.twig', [
                 'errors' => $validationErrors,
-                'formData' => [
-                    'title' => $post->title,
-                    'chapo' => $post->chapo,
-                    'content' => $post->content,
-                ]
-            ]);
-        } catch (AccessDeniedException $e) {
-            $validationErrors = $e->validationErrors;
-
-            echo $this->twig->render('post/edit.html.twig', [
-                'errors' => $validationErrors,
-                'formData' => [
-                    'title' => $post->title,
-                    'chapo' => $post->chapo,
-                    'content' => $post->content,
-                ]
-            ]);
-        } catch (ImageException $e) {
-            $errors = $e->validationErrors;
-
-            echo $this->twig->render('post/edit.html.twig', [
-                'errors' => $errors,
                 'formData' => [
                     'title' => $post->title,
                     'chapo' => $post->chapo,

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Model\Validator;
 
-use App\Entity\BlogPost;
+use App\Model\Entity\BlogPost;
 use App\Exception\BlogPostException;
 
 /**

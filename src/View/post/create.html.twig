@@ -18,6 +18,7 @@
                             <form id="createPostForm" method="post" action="/post/create/submit" enctype="multipart/form-data">
 
                                 <div class=" text-danger mb-3">{{otherError}}</div>
+                                <div class=" text-danger mb-3">{{errors.admin}}</div>
 
 
                                 <!-- Title input-->
@@ -51,13 +52,16 @@
                                     <label for="content">Contenu</label>
                                     <div class="invalid-feedback" data-sb-feedback="message:required">Un text de contenu est nécessaire.</div>
                                     <div class=" text-danger mb-3">{{errors.content}}</div>
-
                                 </div>
+
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
                                 <!-- Submit Button-->
                                 <div class="d-grid">
                                     <button class="btn btn-primary btn-lg " name="submitButton" id="publish" value="published" type="submit">Publier</button>
                                     <button class="btn btn-primary btn-lg mt-3" name="submitButton" id="draft" value="draft" type="submit" > Enregistrer en tant que brouillon</button>
                                 </div>
+                                <div class=" text-danger mb-3">{{ errors.csrf_token }}</div>
                                 <div class=" text-danger mb-3">{{ twigError }}</div>
 
                             </form>

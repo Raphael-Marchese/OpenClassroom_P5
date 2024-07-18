@@ -3,8 +3,9 @@ declare(strict_types=1);
 
 namespace App\Model\Repository;
 
-use App\Entity\User;
-use App\Model\Database;
+use Database\Database;
+use App\Model\Entity\User;
+
 use PDO;
 use PDOStatement;
 

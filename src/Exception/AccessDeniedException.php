@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Exception;
 
-class AccessDeniedException extends \RuntimeException
+class AccessDeniedException extends \Exception
 {
     public function __construct(public array $validationErrors = [])
     {

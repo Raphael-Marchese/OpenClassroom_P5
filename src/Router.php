@@ -7,7 +7,8 @@ use App\Controller\Post\CreatePostController;
 use App\Controller\Post\DeletePostController;
 use App\Controller\Post\EditPostController;
 use App\Controller\Post\GetPostController;
-use App\Controller\UserController;
+use App\Controller\User\LoginController;
+use App\Controller\User\RegisterController;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -27,11 +28,11 @@ class Router
             '/post/(\d+)/edit' => [EditPostController::class, 'postEditForm'],
             '/post/(\d+)/edit/submit' => [EditPostController::class, 'postEdit'],
             '/post/(\d+)/delete' => [DeletePostController::class, 'deletePost'],
-            '/register' => [UserController::class, 'register'],
-            '/register/submit' => [UserController::class, 'submitRegister'],
-            '/login' => [UserController::class, 'login'],
-            '/login/submit' => [UserController::class, 'submitLogin'],
-            '/logout' => [UserController::class, 'logout'],
+            '/register' => [RegisterController::class, 'register'],
+            '/register/submit' => [RegisterController::class, 'submitRegister'],
+            '/login' => [LoginController::class, 'login'],
+            '/login/submit' => [LoginController::class, 'submitLogin'],
+            '/logout' => [LoginController::class, 'logout'],
             '/404' => Error404::class,
         ];
     }
