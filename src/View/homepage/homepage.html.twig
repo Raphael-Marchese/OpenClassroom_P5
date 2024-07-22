@@ -1,9 +1,10 @@
 {% extends 'layout.html.twig' %}
 
 {% block body %}
-        <!-- Header-->
+    <!-- Header-->
         <header class="bg-dark py-5">
             <div class="container px-5">
+                <div class=" text-danger mb-3">{{errors.admin}}</div>
                 <div class="row gx-5 align-items-center justify-content-center">
                     <div class="col-lg-8 col-xl-7 col-xxl-6">
                         <div class="my-5 text-center text-xl-start">
@@ -11,7 +12,7 @@
                             <p class="lead fw-normal text-white-50 mb-4">Ce blog est fait en Php 8.1, le front est fait en Twig avec l'aide de Bootstrap</p>
                         </div>
                     </div>
-                    <div class="col-xl-5 col-xxl-6 d-none d-xl-block text-center"><img class="img-fluid rounded-3 my-5" src="../../../public/assets/images/php.png" alt="..." /></div>
+                    <div class="col-xl-5 col-xxl-6 d-none d-xl-block text-center"><img class="img-fluid rounded-3 my-5" src="../../../public/assets/images/php.png" alt="image de l'éléphant Php" /></div>
                 </div>
             </div>
         </header>

@@ -1,16 +1,22 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace App\Model\Entity;
 
 class Comment
 {
     private int $id;
+
     private string $content;
+
     private \DateTimeInterface $createdAt;
+
     private \DateTimeInterface $updatedAt;
+
     private User $author;
+
     private BlogPost  $blogPost;
+
 
     /**
      * @return int

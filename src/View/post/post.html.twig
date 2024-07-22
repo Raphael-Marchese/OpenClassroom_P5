@@ -2,6 +2,7 @@
 
 {% block body %}
 <main class="flex-shrink-0">
+    {% if session.user_id == post.author.id or session.role == 'ROLE_ADMIN'%}
     <div class="d-flex justify-content-end m-3">
         <a href="/post/{{ post.id }}/edit">
             <button class="btn btn-secondary me-3">Modifier</button>
@@ -10,6 +11,7 @@
             <button class="btn btn-danger">Supprimer</button>
         </a>
     </div>
+    {% endif %}
     {% for error in errors %}
         <div class=" text-danger m-3"> {{ error }} </div>
     {% endfor %}
@@ -30,7 +32,11 @@
                             <p class="card-text mb-0">{{ post.chapo|raw }}</p>
 
                             <!-- Post meta content-->
-                            <div class="text-muted fst-italic mb-2">{{ post.updated_at|format_datetime('full', 'short', locale='fr') }}</div>
+                            {% if post.updated_at %}
+                                <div class="text-muted fst-italic mb-2">Mis à jour le {{ post.updated_at|format_datetime('full', 'short', locale='fr') }}</div>
+                            {% else %}
+                                <div class="text-muted fst-italic mb-2">{{ post.created_at|format_datetime('full', 'short', locale='fr') }}</div>
+                            {% endif %}
                             <div class="text-muted">{{ post.author.username }}</div>
 
 

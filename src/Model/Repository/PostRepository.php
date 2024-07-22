@@ -1,12 +1,13 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Model\Repository;
 
-use App\Exception\BlogPostException;
-use App\Model\Database;
-use App\Entity\BlogPost;
-use App\Model\Service\PostFactory;
+use App\Exception\DatabaseException;
+use Database\Database;
+use App\Model\Entity\BlogPost;
+use App\Service\PostFactory;
 use PDO;
 use PDOStatement;
 
@@ -22,10 +23,17 @@ class PostRepository extends Database
     /**
      * Return all posts
      * @return bool|PDOStatement
+     * @throws DatabaseException
      */
     public function findAll(): bool|PDOStatement
     {
-        return $this->connect()->query('SELECT * FROM blog_post ORDER BY updated_at ASC');
+        $result = $this->connect()->query('SELECT * FROM blog_post ORDER BY updated_at ASC');
+
+        if ($result === false) {
+            throw new DatabaseException('le chargement a échoué');
+        }
+
+        return $result;
     }
 
     /**
@@ -33,7 +41,7 @@ class PostRepository extends Database
      * @param int $id
      * @return BlogPost|null
      */
-    public function findById(int $id) : ?BlogPost
+    public function findById(int $id): ?BlogPost
     {
         $query = 'SELECT * FROM blog_post WHERE id = :id';
         $statement = $this->connect()->prepare($query);
@@ -43,19 +51,20 @@ class PostRepository extends Database
         $result = $statement->fetch(PDO::FETCH_ASSOC);
 
         // Vérifier s'il y a des résultats
-        if ($result !== false) {
-            $blogPost = $this->postFactory->createBlogPost($result);
-            $blogPost->id = $result['id'];
-            return $blogPost;
+        if ($result === false) {
+            return null; // Aucun résultat trouvé
         }
 
-        return null; // Aucun résultat trouvé
+        $blogPost = $this->postFactory->createBlogPost($result);
+        $blogPost->id = $result['id'];
+
+        return $blogPost;
     }
 
     /**
      * @param BlogPost $blogPost
      * @return bool
-     * @throws BlogPostException
+     * @throws DatabaseException
      */
     public function create(BlogPost $blogPost): bool
     {
@@ -71,15 +80,13 @@ class PostRepository extends Database
         $statement->bindValue(':author', $blogPost->author->id, type: PDO::PARAM_INT);
         $statement->bindValue(':image', $blogPost->image, type: PDO::PARAM_STR);
 
-        if ($statement->execute()) {
-            $blogPost->id = (int) $db->lastInsertId();
-            return true;
-        } else {
-            // Vous pouvez enregistrer les erreurs dans un fichier log ou gérer les erreurs de manière appropriée
-            error_log('Erreur lors de l\'insertion de l\'utilisateur: ' . implode(', ', $stmt->errorInfo()));
-            return false;
+        if (!$statement->execute()) {
+            throw new DatabaseException('erreur BDD lors de la création du post');
         }
 
+        $blogPost->id = (int)$db->lastInsertId();
+
+        return true;
     }
 
     /**
@@ -94,7 +101,7 @@ class PostRepository extends Database
         $db = $this->connect();
         $statement = $db->prepare($query);
         $statement->bindValue(':id', $id, PDO::PARAM_INT);
-        $statement->bindValue(':title', $blogPost->title , type: PDO::PARAM_STR);
+        $statement->bindValue(':title', $blogPost->title, type: PDO::PARAM_STR);
         $statement->bindValue(':chapo', $blogPost->chapo, type: PDO::PARAM_STR);
         $statement->bindValue(':updatedAt', $blogPost->updatedAt->format('Y-m-d H:i:s'), PDO::PARAM_STR);
         $statement->bindValue(':status', $blogPost->status, type: PDO::PARAM_STR);
@@ -102,19 +109,17 @@ class PostRepository extends Database
         $statement->bindValue(':image', $blogPost->image, type: PDO::PARAM_STR);
 
 
-        if ($statement->execute()) {
-            return true;
-        } else {
-            // Vous pouvez enregistrer les erreurs dans un fichier log ou gérer les erreurs de manière appropriée
-            error_log('Erreur lors de l\'insertion de l\'utilisateur: ' . implode(', ', $stmt->errorInfo()));
-            return false;
+        if (!$statement->execute()) {
+            throw new DatabaseException('erreur BDD lors de la mise à jour du post');
         }
+
+        return true;
     }
 
     /**
      * @param int $id
      * @return bool
-     * @throws bool
+     * @throws bool|DatabaseException
      */
     public function delete(int $id): bool
     {
@@ -123,13 +128,10 @@ class PostRepository extends Database
         $statement = $db->prepare($query);
         $statement->bindValue(':id', $id, PDO::PARAM_INT);
 
-        if ($statement->execute()) {
-            return true;
-        } else {
-            // Vous pouvez enregistrer les erreurs dans un fichier log ou gérer les erreurs de manière appropriée
-            error_log('Erreur lors de l\'insertion de l\'utilisateur: ' . implode(', ', $stmt->errorInfo()));
-            return false;
+        if (!$statement->execute()) {
+            throw new DatabaseException('erreur BDD lors de la suppression du post');
         }
-    }
 
+        return true;
+    }
 }

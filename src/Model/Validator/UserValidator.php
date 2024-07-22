@@ -3,22 +3,19 @@ declare(strict_types=1);
 
 namespace App\Model\Validator;
 
-use App\Entity\User;
+use App\Model\Entity\User;
 use App\Exception\UserException;
 
+/**
+ * @param User $data
+ * @return array<string, string>
+ */
 class UserValidator implements ValidatorInterface
 {
-    /**
-     * @param User $data
-     * @return array<string, string>
-     */
+    #[\Override]
     public function validate($data): void
     {
         $errors = [];
-
-        if (!$data instanceof User) {
-            return;
-        }
 
         if (empty($data->username)) {
             $errors['username'] = 'Renseigner un pseudo est obligatoire';
@@ -33,6 +30,8 @@ class UserValidator implements ValidatorInterface
         if (empty($data->password)) {
             $errors['password'] = 'Le mot de passe est obligatoire.';
         }
+
+
         if (count($errors) > 0) {
             throw new UserException($errors);
         }

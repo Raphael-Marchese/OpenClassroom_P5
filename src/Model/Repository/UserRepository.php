@@ -1,10 +1,13 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Model\Repository;
 
-use App\Entity\User;
-use App\Model\Database;
+use App\Exception\DatabaseException;
+use Database\Database;
+use App\Model\Entity\User;
+
 use PDO;
 use PDOStatement;
 
@@ -12,8 +15,15 @@ class UserRepository extends Database
 {
     public function findAll(): bool|PDOStatement
     {
-        return $this->connect()->query('SELECT * FROM user ORDER BY id ASC');
+        $result = $this->connect()->query('SELECT * FROM user ORDER BY id ASC');
+
+        if ($result === false) {
+            throw new DatabaseException('le chargement a échoué');
+        }
+
+        return $result;
     }
+
     public function save(User $user): bool
     {
         $query = 'INSERT INTO user (username, first_name, last_name, email, password, role) VALUES (:username, :firstName, :lastName, :email, :password, :role)';
@@ -26,16 +36,14 @@ class UserRepository extends Database
         $statement->bindValue(':role', 'ROLE_USER');
 
 
-        if ($statement->execute()) {
-            return true;
-        } else {
-            // Vous pouvez enregistrer les erreurs dans un fichier log ou gérer les erreurs de manière appropriée
-            error_log('Erreur lors de l\'insertion de l\'utilisateur: ' . implode(', ', $stmt->errorInfo()));
-            return false;
+        if (!$statement->execute()) {
+            throw new DatabaseException('Erreur lors de la création du compte');
         }
+
+        return true;
     }
 
-    public function findByEmail(string $email): bool | null |array
+    public function findByEmail(string $email): bool|null|array
     {
         $query = 'SELECT * FROM user WHERE email = :email';
         $statement = $this->connect()->prepare($query);
@@ -44,12 +52,12 @@ class UserRepository extends Database
 
         $result = $statement->fetch(PDO::FETCH_ASSOC);
 
-        // Vérifier s'il y a des résultats
-        if ($result !== false) {
-            return $result;
+        // Vérifier s'il n'y a aucun résultat
+        if ($result === false) {
+            return null;
         }
 
-        return null; // Aucun résultat trouvé
+        return $result; // Renvoie les résultats
     }
 
     public function findById(?int $id): ?User
@@ -61,20 +69,22 @@ class UserRepository extends Database
 
         $result = $statement->fetch(PDO::FETCH_ASSOC);
 
-        // Vérifier s'il y a des résultats
-        if ($result !== false) {
-            $user = new User(
-                $result['first_name'],
-                $result['last_name'],
-                $result['username'],
-                $result['email'],
-                $result['password'],
-                $result['role']
-            );
-            $user->setId($result['id']);
-            return $user;
+        if ($result === false) {
+            return null;
         }
 
-        return null; // Aucun résultat trouvé
+        // S'il y a un résultat
+        $user = new User(
+            $result['first_name'],
+            $result['last_name'],
+            $result['username'],
+            $result['email'],
+            $result['password'],
+            $result['role']
+        );
+
+        $user->setId($result['id']);
+
+        return $user;
     }
 }
