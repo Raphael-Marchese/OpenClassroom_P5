@@ -30,9 +30,9 @@
                                 </div>
                                 <!-- Chapo input-->
                                 <div class="form-floating mb-3">
-                                    <input class="form-control" id="chapo" name="chapo"  type="text" placeholder="le chapo est utile pour décrire ou résumer l'article" value="{{ formData.chapo|default('') }}" data-sb-validations="required,email" />
+                                    <input class="form-control" id="chapo" name="chapo"  type="text" placeholder="le chapo est utile pour décrire ou résumer l'article" value="{{ formData.chapo|default('') }}" data-sb-validations="required" />
                                     <label for="chapo">Chapo</label>
-                                    <div class="invalid-feedback" data-sb-feedback="email:required">un chapo est obligatoire</div>
+                                    <div class="invalid-feedback" data-sb-feedback="chapo:required">un chapo est obligatoire</div>
                                     <div class=" text-danger mb-3">{{errors.chapo}}</div>
 
                                 </div>

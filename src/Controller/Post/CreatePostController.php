@@ -19,9 +19,6 @@ use App\Service\ImageFactory;
 use App\Service\PostExtractor;
 use App\Service\UserProvider;
 use App\Model\Validator\ValidatorFactory;
-use Twig\Error\LoaderError;
-use Twig\Error\RuntimeError;
-use Twig\Error\SyntaxError;
 
 class CreatePostController extends Controller
 {

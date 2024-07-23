@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Post;
 
 use App\Controller\Controller;
+use App\Model\CSRFToken;
 use App\Model\Repository\CommentRepository;
 use App\Model\Repository\PostRepository;
 use Twig\Error\LoaderError;
@@ -17,11 +18,15 @@ class GetPostController extends Controller
 
     private CommentRepository $commentRepository;
 
+    private CSRFToken $token;
+
+
     public function __construct()
     {
         parent::__construct();
         $this->postRepository = new PostRepository();
         $this->commentRepository = new CommentRepository();
+        $this->token = new CSRFToken();
     }
 
     /**
@@ -48,8 +53,9 @@ class GetPostController extends Controller
     public function getPost(int $id): void
     {
         $post = $this->postRepository->findById($id);
-        $comments = $this->commentRepository->findCommentsByPostId($id);
+        $comments = $this->commentRepository->findByPostId($id);
+        $csrfToken = $this->token->generateToken('commentPost');
 
-        echo $this->twig->render('post/post.html.twig', ['post' => $post, 'comments' => $comments]);
+        echo $this->twig->render('post/post.html.twig', ['post' => $post, 'comments' => $comments, 'csrf_token' => $csrfToken]);
     }
 }
