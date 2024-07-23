@@ -24,6 +24,7 @@ CREATE TABLE `comment` (
                            `content` text,
                            `created_at` dateTime,
                            `updated_at` datetime,
+                            `status` ENUM ('draft', 'pending', 'published'),
                            `author` integer,
                            `post` integer
 );
