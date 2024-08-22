@@ -15,7 +15,6 @@ use App\Model\Repository\PostRepository;
 use App\Service\CommentExtractor;
 use App\Service\FormSanitizer;
 use App\Service\UserProvider;
-use http\Exception\RuntimeException;
 
 class CreateCommentController extends Controller
 {
@@ -79,10 +78,10 @@ class CreateCommentController extends Controller
 
         } catch (CommentException | CSRFTokenException $e) {
             $errors = $e->validationErrors;
-
-
+            echo $this->twig->render('post/post.html.twig', ['post' => $post, 'errors' => $errors]);
         } catch (DatabaseException $e) {
             $error = $e->getMessage();
+            echo $this->twig->render('post/post.html.twig', ['post' => $post, 'error' => $error]);
         }
     }
 }

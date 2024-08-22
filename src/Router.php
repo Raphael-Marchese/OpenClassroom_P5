@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Controller\Comment\CreateCommentController;
+use App\Controller\Comment\DeleteCommentController;
 use App\Controller\HomeController;
 use App\Controller\Post\CreatePostController;
 use App\Controller\Post\DeletePostController;
@@ -40,6 +41,7 @@ class Router
             '/login/submit' => [LoginController::class, 'submitLogin'],
             '/logout' => [LoginController::class, 'logout'],
             '/comment/create/submit' => [CreateCommentController::class, 'createComment'],
+            '/comment/(\d+)/delete' => [DeleteCommentController::class, 'deleteComment'],
             '/404' => Error404::class,
         ];
     }

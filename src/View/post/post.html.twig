@@ -74,7 +74,16 @@
                                     <div class="ms-3">
                                         {{ comment.content }}
                                     </div>
-
+                                        {% if session.user_id == comment.author.id or session.role == 'ROLE_ADMIN'%}
+                                            <div class="d-flex justify-content-end m-3">
+                                                <a href="/comment/{{ comment.id }}/edit">
+                                                    <button class="btn btn-secondary me-3">Modifier</button>
+                                                </a>
+                                                <a href="/comment/{{ comment.id }}/delete">
+                                                    <button class="btn btn-danger">Supprimer</button>
+                                                </a>
+                                            </div>
+                                        {% endif %}
                                     {% endfor %}
                                 </div>
                             </div>
