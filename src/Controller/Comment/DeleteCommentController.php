@@ -52,6 +52,7 @@ class DeleteCommentController extends Controller
             throw new AccessDeniedException($errors);
         }
 
+
         try {
             $this->commentRepository->delete($id);
             header(sprintf('location: /post/%s', $comment->blogPost->id));

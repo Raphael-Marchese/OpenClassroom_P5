@@ -13,6 +13,7 @@ class ValidatorFactory
             new ImageValidator(),
             new UserValidator(),
             new PostValidator(),
+            new CommentValidator(),
         ];
     }
 

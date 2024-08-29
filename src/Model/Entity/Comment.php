@@ -19,4 +19,11 @@ class Comment
     ) {
     }
 
+    public function setId(int $id): void
+    {
+        if (!isset($this->id)) {
+            $this->id = $id;
+        }
+    }
+
 }

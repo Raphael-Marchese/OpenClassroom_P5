@@ -34,7 +34,18 @@ class CommentRepository extends Database
             return []; // Aucun résultat trouvé
         }
 
-        return $result;
+        $comments = [];
+
+        // Parcourir chaque résultat et créer un objet Comment
+        foreach ($result as $commentData) {
+            $comment = $this->commentFactory->createComment($commentData);
+
+            $comment->id = $commentData['id'];
+
+            $comments[] = $comment;
+        }
+
+        return $comments;
     }
 
     public function findById(int $id): ?Comment
@@ -86,6 +97,23 @@ class CommentRepository extends Database
 
         if (!$statement->execute()) {
             throw new DatabaseException('erreur BDD lors de la suppression du post');
+        }
+
+        return true;
+    }
+
+    public function update(Comment $comment, int $id): bool
+    {
+        $query = 'UPDATE comment SET content = :content, updated_at = :updatedAt, content = :content, status = :status WHERE id = :id';
+        $db = $this->connect();
+        $statement = $db->prepare($query);
+        $statement->bindValue(':id', $id, PDO::PARAM_INT);
+        $statement->bindValue(':content', $comment->content, type: PDO::PARAM_STR);
+        $statement->bindValue(':updatedAt', $comment->updatedAt->format('Y-m-d H:i:s'), PDO::PARAM_STR);
+        $statement->bindValue(':status', $comment->status, type: PDO::PARAM_STR);
+
+        if (!$statement->execute()) {
+            throw new DatabaseException('erreur BDD lors de la mise à jour du post');
         }
 
         return true;
