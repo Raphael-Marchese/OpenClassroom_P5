@@ -19,9 +19,6 @@ use App\Service\ImageFactory;
 use App\Service\PostExtractor;
 use App\Service\UserProvider;
 use App\Model\Validator\ValidatorFactory;
-use Twig\Error\LoaderError;
-use Twig\Error\RuntimeError;
-use Twig\Error\SyntaxError;
 
 class CreatePostController extends Controller
 {
@@ -89,15 +86,16 @@ class CreatePostController extends Controller
         }
 
         try {
+            $token = $_POST['csrf_token'];
+            $this->token->validateToken($token, $csrfCheck);
+
             $image = $this->imageFactory->createImage($_FILES['image']);
 
             $sanitizedData = $this->formSanitizer->sanitize($_POST);
-            $token = $sanitizedData['csrf_token'];
 
-            $this->token->validateToken($token, $csrfCheck);
             ValidatorFactory::validate($image);
 
-            $post = $this->postExtractor->extractBlogPost($user, $_POST, $image);
+            $post = $this->postExtractor->extractBlogPost($user, $sanitizedData, $image);
 
             ValidatorFactory::validate($post);
 

@@ -63,7 +63,8 @@ class LoginController extends Controller
 
         $user = $this->repository->findByEmail($sanitizedData['email']);
 
-        if ($user['email'] === $sanitizedData['email'] &&
+        if ($user && isset($user['email']) &&
+            $user['email'] === $sanitizedData['email'] &&
             password_verify($sanitizedData['password'], $user['password'])
         ) {
             $_SESSION['LOGGED_USER'] = [

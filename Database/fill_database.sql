@@ -19,9 +19,14 @@ VALUES
     ('Titre article 10', 'Chapo article 10', DATE_ADD(NOW(), INTERVAL -1 DAY), NOW(), 'Contenu de l\'article 10', 'draft', 1);
 
 -- Commentaires sur chaque article par l'utilisateur classique
-INSERT INTO `comment` (`content`, `created_at`, `updated_at`, `author`, `post`)
+INSERT INTO `comment` (`content`, `created_at`, `updated_at`, `status`,`author`, `post`)
 SELECT
     CONCAT('Commentaire sur l\'article ', bp.id, ' par l\'utilisateur normal'),
-    DATE_ADD(NOW(), INTERVAL -RAND() * 10 DAY), NOW(), 2, bp.id
+    DATE_ADD(NOW(), INTERVAL -RAND() * 10 DAY), NOW(),
+    CASE
+        WHEN bp.id % 2 = 0 THEN 'published'
+        ELSE 'pending'
+        END,
+    2, bp.id
 FROM
     `blog_post` bp;

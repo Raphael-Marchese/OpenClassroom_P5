@@ -48,7 +48,7 @@ class EditPostController extends Controller
         $this->token = new CSRFToken();
     }
 
-    public function postEditForm($id): void
+    public function postEditForm(int $id): void
     {
         $post = $this->postRepository->findById($id);
         if ($post === null) {
@@ -74,7 +74,7 @@ class EditPostController extends Controller
         echo $this->twig->render('post/edit.html.twig', ['post' => $post, 'csrf_token' => $csrfToken]);
     }
 
-    public function postEdit(): void
+    public function postEdit(int $id): void
     {
         $csrfCheck = 'editPost';
 
@@ -89,25 +89,15 @@ class EditPostController extends Controller
             return;
         }
 
-        $sanitizedData = $this->sanitizer->sanitize($_POST);
-
-        $id = $sanitizedData['id'];
-
         try {
-            $token = $sanitizedData['csrf_token'];
-
+            $token = $_POST['csrf_token'];
             $this->token->validateToken($token, $csrfCheck);
-        } catch (CSRFTokenException $e) {
-            $validationErrors = $e->validationErrors;
 
-            echo $this->twig->render('post/edit.html.twig', [
-                'errors' => $validationErrors,
-            ]);
-        }
-        $image = $this->imageFactory->createImage($_FILES['image']);
-        $post = $this->postExtractor->extractBlogPost($user, $_POST, $image);
+            $sanitizedData = $this->sanitizer->sanitize($_POST);
 
-        try {
+            $image = $this->imageFactory->createImage($_FILES['image']);
+            $post = $this->postExtractor->extractBlogPost($user, $sanitizedData, $image);
+
             ValidatorFactory::validate($image);
             ValidatorFactory::validate($post);
 

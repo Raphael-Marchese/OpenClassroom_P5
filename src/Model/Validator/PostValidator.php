@@ -29,7 +29,7 @@ class PostValidator implements ValidatorInterface
         }
 
         if (empty($data->author)) {
-            $errors['author'] = 'Vous devez être connecté pour écrire un article';
+            $errors['author'] = 'Vous devez être connecté pour écrire un commentaire';
         }
         if(count($errors) > 0)
         {
