@@ -14,6 +14,7 @@ use App\Model\CSRFToken;
 use App\Model\Repository\CommentRepository;
 use App\Model\Repository\PostRepository;
 use App\Model\Validator\ValidatorFactory;
+use App\Security\AdminChecker;
 use App\Security\AuthorChecker;
 use App\Service\CommentExtractor;
 use App\Service\FormSanitizer;
@@ -27,6 +28,8 @@ class EditCommentController extends Controller
     private UserProvider $userProvider;
 
     private AuthorChecker $authorChecker;
+
+    private AdminChecker $adminChecker;
 
     private PostRepository $postRepository;
 
@@ -46,6 +49,7 @@ class EditCommentController extends Controller
         $this->token = new CSRFToken();
         $this->sanitizer = new FormSanitizer();
         $this->commentExtractor = new CommentExtractor();
+        $this->adminChecker = new AdminChecker();
     }
 
     public function commentEditForm($id): void
@@ -139,54 +143,35 @@ class EditCommentController extends Controller
         }
     }
 
-    public function commentStatusEdit(): void
+    public function commentStatusEdit($id): void
     {
-        $csrfCheck = 'editPost';
-
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
 
         try {
-            $user = $this->userProvider->getUser();
+           $user = $this->userProvider->getUser();
         } catch (UserNotFoundException) {
             header('location: /login');
             return;
         }
 
-        $sanitizedData = $this->sanitizer->sanitize($_POST);
+        $comment = $this->commentRepository->findById($id);
 
-        $id = $sanitizedData['comment_id'];
-
-        try {
-            $token = $sanitizedData['csrf_token'];
-
-            $this->token->validateToken($token, $csrfCheck);
-        } catch (CSRFTokenException $e) {
-            $validationErrors = $e->validationErrors;
-
-            echo $this->twig->render('post/post.html.twig', [
-                'errors' => $validationErrors,
-            ]);
-        }
-
-        $post = $this->postRepository->findById((int)$sanitizedData['post_id']);
-
-        $comment = $this->commentExtractor->extractComment($sanitizedData, $user, $post);
-
-        $comments = $this->commentRepository->findByPostId($post?->id);
-
+        $comments = $this->commentRepository->findByPostId($comment?->blogPost->id);
 
         try {
-            ValidatorFactory::validate($comment);
+            if(!$comment) {
+                $validationErrors['comment'] = 'Le commentaire n\'a pas été trouvé';
+                throw new CommentException($validationErrors);
+            }
 
+            $this->adminChecker->isAdmin($user);
             $comment->updatedAt = new \DateTime();
-
-            $this->authorChecker->checkAuthor($comment);
-
+            $comment->status = 'published';
             $this->commentRepository->update($comment, (int)$id);
 
-            header(sprintf('Location: /post/%s', $post?->id));
+            header(sprintf('Location: /post/%s', $comment?->blogPost->id));
             ob_end_flush();
             return;
         } catch (AccessDeniedException | CommentException $e) {
@@ -194,10 +179,10 @@ class EditCommentController extends Controller
 
             ob_end_clean();
 
-            echo $this->twig->render('post/post.html.twig', ['post' => $post, 'comments' => $comments, 'csrf_token' => $token,'errors' => $validationErrors, ]);
+            echo $this->twig->render('post/post.html.twig', ['post' => $comment?->blogPost, 'comments' => $comments, 'errors' => $validationErrors, ]);
         } catch (\Exception|DatabaseException $e) {
             $error = $e->getMessage();
-            echo $this->twig->render('post/post.html.twig', ['post' => $post, 'comments' => $comments, 'csrf_token' => $token,'errors' => $error, ]);
+            echo $this->twig->render('post/post.html.twig', ['post' => $comment?->blogPost, 'comments' => $comments, 'errors' => $error, ]);
 
         }
     }
