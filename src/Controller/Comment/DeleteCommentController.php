@@ -6,10 +6,12 @@ namespace App\Controller\Comment;
 
 use App\Controller\Controller;
 use App\Exception\AccessDeniedException;
+use App\Exception\CommentNotFoundException;
 use App\Exception\UserNotFoundException;
 use App\Model\Repository\CommentRepository;
 use App\Model\Repository\PostRepository;
 use App\Security\AdminChecker;
+use App\Security\AuthorisationChecker;
 use App\Service\UserProvider;
 
 class DeleteCommentController extends Controller
@@ -21,15 +23,15 @@ class DeleteCommentController extends Controller
 
     private UserProvider $userProvider;
 
-    private AdminChecker $adminChecker;
+    private AuthorisationChecker $authorisationChecker;
 
     public function __construct()
     {
         parent::__construct();
         $this->commentRepository = new CommentRepository();
         $this->userProvider = new UserProvider();
-        $this->adminChecker = new AdminChecker();
         $this->postRepository = new PostRepository();
+        $this->authorisationChecker = new AuthorisationChecker();
     }
 
     public function deleteComment($id): void
@@ -43,17 +45,19 @@ class DeleteCommentController extends Controller
 
         $comment = $this->commentRepository->findById($id);
 
-        if(!$comment){
-            return;
+        try {
+            if ($comment === null ) {
+                $validationErrors['comment'] = 'Commentaire non trouvé';
+                throw new CommentNotFoundException($validationErrors);
+            }
+        } catch (CommentNotFoundException $e) {
+            $validationErrors = $e->validationErrors;
+            $post = $this->postRepository->findById($id);
+            echo $this->twig->render('post/post.html.twig', ['post' => $post, 'errors' => $validationErrors]);
         }
-
-        if($user->role !== "ROLE_ADMIN" || $user->id !== $comment->author->id){
-            $errors['access'] = "Vous n'avez pas les droits pour effectuer cette action";
-            throw new AccessDeniedException($errors);
-        }
-
 
         try {
+            $this->authorisationChecker->checkAuthorisation($user);
             $this->commentRepository->delete($id);
             header(sprintf('location: /post/%s', $comment->blogPost->id));
             return;

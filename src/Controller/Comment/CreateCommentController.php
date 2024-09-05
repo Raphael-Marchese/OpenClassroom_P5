@@ -60,9 +60,15 @@ class CreateCommentController extends Controller
         }
 
         try {
-            $sanitizedData = $this->formSanitizer->sanitize($_POST);
-            $token = $sanitizedData['csrf_token'];
+            $token = $_POST['csrf_token'];
             $this->token->validateToken($token, $csrfCheck);
+        } catch (CSRFTokenException $e) {
+            $errors = $e->validationErrors;
+            echo $this->twig->render('post/post.html.twig', ['post' => $post, 'errors' => $errors]);
+        }
+
+        try {
+            $sanitizedData = $this->formSanitizer->sanitize($_POST);
             $post = $this->postRepository->findById((int)$sanitizedData['post_id']);
 
             if ($post === null) {
@@ -76,7 +82,7 @@ class CreateCommentController extends Controller
             header(sprintf('location: /post/%s', $post->id));
             return;
 
-        } catch (CommentException | CSRFTokenException $e) {
+        } catch (CommentException) {
             $errors = $e->validationErrors;
             echo $this->twig->render('post/post.html.twig', ['post' => $post, 'errors' => $errors]);
         } catch (DatabaseException $e) {

@@ -60,21 +60,18 @@ class RegisterController extends Controller
             return;
         }
 
-
-        $sanitizedData = $this->formSanitizer->sanitize($_POST);
-
-        $user = $this->userExtractor->extractUser($sanitizedData);
-
         try {
-            $token = $sanitizedData['csrf_token'];
-
+            $token = $_POST['csrf_token'];
             $this->token->validateToken($token, $csrfCheck);
+
+            $sanitizedData = $this->formSanitizer->sanitize($_POST);
+            $user = $this->userExtractor->extractUser($sanitizedData);
 
             ValidatorFactory::validate($user);
             $this->repository->save($user);
 
             echo $this->twig->render('user/success.html.twig');
-        } catch (UserException|CSRFTokenException $e) {
+        } catch (UserException | CSRFTokenException $e) {
             echo $this->twig->render('user/register.html.twig', [
                 'errors' => $e->validationErrors,
                 'formData' => [
