@@ -28,7 +28,6 @@ class CommentValidator implements ValidatorInterface
         if(count($errors) > 0)
         {
             throw new CommentException($errors);
-
         }
 
     }
