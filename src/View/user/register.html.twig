@@ -8,7 +8,6 @@
                 <!-- Contact form-->
                 <div class="bg-light rounded-3 py-5 px-4 px-md-5 mb-5">
                     <div class="text-center mb-5">
-                        <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-envelope"></i></div>
                         <h1 class="fw-bolder">Inscription</h1>
                         <p class="lead fw-normal text-muted mb-0">Merci de compléter ce formulaire d'inscription</p>
                     </div>
@@ -55,7 +54,7 @@
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 
                                 <!-- Submit Button-->
-                                <div class="d-grid"><button class="btn btn-primary btn-lg" id="submitButton" type="submit">Submit</button></div>
+                                <div class="d-grid"><button class="btn btn-primary btn-lg" id="submitButton" type="submit">Enregistrer</button></div>
                                 <div class=" text-danger mb-3">{{ errors.csrf_token }}</div>
                                 <div class=" text-danger mb-3">{{ twigError }}</div>
 

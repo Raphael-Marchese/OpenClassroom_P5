@@ -64,6 +64,8 @@ class CreateCommentController extends Controller
             $this->token->validateToken($token, $csrfCheck);
         } catch (CSRFTokenException $e) {
             $errors = $e->validationErrors;
+            $sanitizedData = $this->formSanitizer->sanitize($_POST);
+            $post = $this->postRepository->findById((int)$sanitizedData['post_id']);
             echo $this->twig->render('post/post.html.twig', ['post' => $post, 'errors' => $errors]);
         }
 

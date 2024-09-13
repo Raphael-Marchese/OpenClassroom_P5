@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Model\Validator;
@@ -30,7 +31,6 @@ class UserValidator implements ValidatorInterface
         if (empty($data->password)) {
             $errors['password'] = 'Le mot de passe est obligatoire.';
         }
-
 
         if (count($errors) > 0) {
             throw new UserException($errors);

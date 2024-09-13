@@ -13,4 +13,5 @@ class Config
     const USER_DATABASE = USER_DATABASE;
     const PASSWORD_DATABASE = PASSWORD_DATABASE;
     const NAME_DATABASE = NAME_DATABASE;
+    const DSN = DSN;
 }

@@ -5,6 +5,7 @@ namespace App;
 use App\Controller\Comment\CreateCommentController;
 use App\Controller\Comment\DeleteCommentController;
 use App\Controller\Comment\EditCommentController;
+use App\Controller\Contact\ContactController;
 use App\Controller\HomeController;
 use App\Controller\Post\CreatePostController;
 use App\Controller\Post\DeletePostController;
@@ -46,6 +47,8 @@ class Router
             '/comment/(\d+)/edit' => [EditCommentController::class, 'commentEditForm'],
             '/comment/(\d+)/edit/submit' => [EditCommentController::class, 'commentEdit'],
             '/comment/(\d+)/status/edit' => [EditCommentController::class, 'commentStatusEdit'],
+            '/contact' => [ContactController::class, 'contact'],
+            '/contact/submit' => [ContactController::class, 'submitContact'],
             '/404' => Error404::class,
         ];
     }

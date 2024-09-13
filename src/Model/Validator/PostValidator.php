@@ -34,7 +34,6 @@ class PostValidator implements ValidatorInterface
         if(count($errors) > 0)
         {
             throw new BlogPostException($errors);
-
         }
     }
 
