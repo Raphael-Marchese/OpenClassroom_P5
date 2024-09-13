@@ -43,8 +43,13 @@
                         </header>
 
                         <!-- Preview image figure-->
-                        <figure class="mb-4"><img class="img-fluid rounded" src="../../../public/assets/images/{{ post.image }}" alt="..." /></figure>
-
+                        <figure class="mb-4">
+                            {% if post.image %}
+                                <img class="img-fluid rounded" src="../../../public/assets/images/{{ post.image }}" alt="..." />
+                            {% else %}
+                                <img class="img-fluid rounded" src="../../../public/assets/websiteUtils/franken.png" alt="Photo illustration article"/>
+                            {% endif %}
+                        </figure>
                         <!-- Post content-->
                         <section class="mb-5">
                             <p class="fs-5 mb-4">{{ post.content|raw }}</p>
@@ -103,7 +108,7 @@
 
                                             {% if session.user_id == comment.author.id %}
                                                 <div class="d-flex  align-items-center ">
-                                                    <div class="flex-shrink-0"><img class="rounded-circle" style="width: 50px; height: 50px;" src="../../../public/assets/images/user.png" alt="..." /></div>
+                                                    <div class="flex-shrink-0"><img class="rounded-circle" style="width: 50px; height: 50px;" src="../../../public/assets/websiteUtils/user.png" alt="..." /></div>
                                                     <div class="fw-bold ms-3 text-muted">{{ comment.author.username }}</div>
                                                 </div>
                                                 <div class="ms-3 text-muted">
@@ -125,7 +130,7 @@
                                         {% endif %}
                                         {% if comment.status == 'published' %}
                                             <div class="d-flex  align-items-center ">
-                                                <div class="flex-shrink-0"><img class="rounded-circle" style="width: 50px; height: 50px;" src="../../../public/assets/images/user.png" alt="..." /></div>
+                                                <div class="flex-shrink-0"><img class="rounded-circle" style="width: 50px; height: 50px;" src="../../../public/assets/websiteUtils/user.png" alt="..." /></div>
                                                 <div class="fw-bold ms-3">{{ comment.author.username }}</div>
                                             </div>
                                             <div class="ms-3">

@@ -8,6 +8,8 @@ use App\Exception\DatabaseException;
 use Database\Database;
 use App\Model\Entity\BlogPost;
 use App\Service\PostFactory;
+use DateTime;
+use DateTimeZone;
 use PDO;
 use PDOStatement;
 
@@ -25,15 +27,26 @@ class PostRepository extends Database
      * @return bool|PDOStatement
      * @throws DatabaseException
      */
-    public function findAll(): bool|PDOStatement
+    public function findAll(): array
     {
-        $result = $this->connect()->query('SELECT * FROM blog_post ORDER BY updated_at ASC');
+        $result = $this->connect()->query('SELECT * FROM blog_post ORDER BY updated_at DESC');
 
         if ($result === false) {
-            throw new DatabaseException('le chargement a échoué');
+            return []; // Aucun résultat trouvé
         }
 
-        return $result;
+        $posts = [];
+
+        // Parcourir chaque résultat et créer un objet Comment
+        foreach ($result as $postData) {
+            $post = $this->postFactory->createBlogPost($postData);
+
+            $post->id = $postData['id'];
+
+            $posts[] = $post;
+        }
+
+        return $posts;
     }
 
     /**
@@ -74,7 +87,7 @@ class PostRepository extends Database
         $statement->bindValue(':title', $blogPost->title, type: PDO::PARAM_STR);
         $statement->bindValue(':chapo', $blogPost->chapo, type: PDO::PARAM_STR);
         $statement->bindValue(':createdAt', $blogPost->createdAt->format('Y-m-d H:i:s'), PDO::PARAM_STR);
-        $statement->bindValue(':updatedAt', $blogPost->updatedAt?->format('Y-m-d H:i:s'), PDO::PARAM_STR);
+        $statement->bindValue(':updatedAt', $blogPost->updatedAt ? $blogPost->updatedAt->format('Y-m-d H:i:s') : $blogPost->createdAt->format('Y-m-d H:i:s'), PDO::PARAM_STR);
         $statement->bindValue(':status', $blogPost->status, type: PDO::PARAM_STR);
         $statement->bindValue(':content', $blogPost->content, type: PDO::PARAM_STR);
         $statement->bindValue(':author', $blogPost->author->id, type: PDO::PARAM_INT);
@@ -134,4 +147,30 @@ class PostRepository extends Database
 
         return true;
     }
+
+    public function findThreeLastPosts(): array
+    {
+        $result = $this->connect()->query('SELECT * FROM blog_post ORDER BY updated_at DESC LIMIT 3');
+        if ($result === false) {
+            throw new DatabaseException('le chargement a échoué');
+        }
+
+        if ($result === false) {
+            return []; // Aucun résultat trouvé
+        }
+
+        $posts = [];
+
+        // Parcourir chaque résultat et créer un objet Comment
+        foreach ($result as $postData) {
+            $post = $this->postFactory->createBlogPost($postData);
+
+            $post->id = $postData['id'];
+
+            $posts[] = $post;
+        }
+
+        return $posts;
+    }
+
 }
