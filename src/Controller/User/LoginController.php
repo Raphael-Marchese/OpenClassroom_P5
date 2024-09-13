@@ -74,7 +74,7 @@ class LoginController extends Controller
                 'role' => $user['role'],
             ];
             $this->twig->addGlobal('session', $_SESSION['LOGGED_USER']);
-            echo $this->twig->render('homepage/homepage.html.twig');
+            header('Location: /');
         }
         if (!isset($_SESSION['LOGGED_USER'])) {
             $errorMessage = 'Les identifiants de connexions ne sont pas valides.';
