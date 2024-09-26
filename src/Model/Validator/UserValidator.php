@@ -6,6 +6,7 @@ namespace App\Model\Validator;
 
 use App\Model\Entity\User;
 use App\Exception\UserException;
+use Override;
 
 /**
  * @param User $data
@@ -13,7 +14,7 @@ use App\Exception\UserException;
  */
 class UserValidator implements ValidatorInterface
 {
-    #[\Override]
+    #[Override]
     public function validate($data): void
     {
         $errors = [];

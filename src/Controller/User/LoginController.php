@@ -9,33 +9,23 @@ use App\Model\CSRFToken;
 use App\Model\Repository\UserRepository;
 use App\Service\FormSanitizer;
 use App\Model\Validator\UserValidator;
+use Exception;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
 class LoginController extends Controller
 {
+
     private UserRepository $repository;
 
     private FormSanitizer $formSanitizer;
-
-    private UserValidator $userValidator;
-
-    private CSRFToken $token;
 
     public function __construct()
     {
         parent::__construct();
         $this->repository = new UserRepository();
         $this->formSanitizer = new FormSanitizer();
-        $this->userValidator = new UserValidator();
-        $this->token = new CSRFToken();
-    }
-
-    public function login(): void
-    {
-
-        echo $this->twig->render('user/login.html.twig');
     }
 
     /**
@@ -43,13 +33,24 @@ class LoginController extends Controller
      * @throws RuntimeError
      * @throws LoaderError
      */
+    public function login(): void
+    {
+        echo $this->twig->render('user/login.html.twig');
+    }
+
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     * @throws Exception
+     */
     public function submitLogin(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
         $postData = $_POST;
-        if (!isset($postData['email']) || !isset($postData['password'])) {
+        if (!isset($postData['email'], $postData['password'])) {
             $errorMessage = 'Vous devez renseigner un email et un mot de passe.';
             echo $this->twig->render('user/login.html.twig', ['errorMessage' => $errorMessage]);
         }
@@ -82,6 +83,11 @@ class LoginController extends Controller
         }
     }
 
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
     public function logout(): void
     {
         $this->twig->addGlobal('session', null);

@@ -7,6 +7,7 @@ namespace App\Service;
 use App\Model\Entity\BlogPost;
 use App\Model\Entity\User;
 use App\Model\File\File;
+use DateTimeImmutable;
 
 class PostExtractor
 {
@@ -26,7 +27,7 @@ class PostExtractor
         $content = $sanitizedData['content'] ?? null;
         $image = $file->name !== '' ? basename($file->name) : null;
         $status = $sanitizedData['submitButton'] ?? null;
-        $createdAt = new \DateTimeImmutable();
+        $createdAt = new DateTimeImmutable();
 
         return new BlogPost(
             title: $title,

@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace App\Model;
 
 use App\Exception\CSRFTokenException;
+use Exception;
 
-class CSRFToken extends \Exception
+class CSRFToken extends Exception
 {
     public function generateToken(string $stringToHash): string
     {

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Exception;
 
-class CommentException extends \Exception
+use Exception;
+
+class CommentException extends Exception
 {
     public function __construct(public array $validationErrors = [])
     {

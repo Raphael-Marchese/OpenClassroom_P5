@@ -15,6 +15,9 @@ use App\Model\Repository\PostRepository;
 use App\Service\CommentExtractor;
 use App\Service\FormSanitizer;
 use App\Service\UserProvider;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class CreateCommentController extends Controller
 {
@@ -32,7 +35,6 @@ class CreateCommentController extends Controller
     private CommentRepository $commentRepository;
 
 
-
     public function __construct()
     {
         parent::__construct();
@@ -44,7 +46,12 @@ class CreateCommentController extends Controller
         $this->commentRepository = new CommentRepository();
     }
 
-    public function createComment()
+    /**
+     * @throws RuntimeError
+     * @throws LoaderError
+     * @throws SyntaxError
+     */
+    public function createComment(): void
     {
         $csrfCheck = 'commentPost';
 
@@ -69,8 +76,11 @@ class CreateCommentController extends Controller
             echo $this->twig->render('post/post.html.twig', ['post' => $post, 'errors' => $errors]);
         }
 
+        $post = null;
+
         try {
             $sanitizedData = $this->formSanitizer->sanitize($_POST);
+
             $post = $this->postRepository->findById((int)$sanitizedData['post_id']);
 
             if ($post === null) {
@@ -83,8 +93,7 @@ class CreateCommentController extends Controller
 
             header(sprintf('location: /post/%s', $post->id));
             return;
-
-        } catch (CommentException) {
+        } catch (CommentException $e) {
             $errors = $e->validationErrors;
             echo $this->twig->render('post/post.html.twig', ['post' => $post, 'errors' => $errors]);
         } catch (DatabaseException $e) {

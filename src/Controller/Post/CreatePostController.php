@@ -19,6 +19,10 @@ use App\Service\ImageFactory;
 use App\Service\PostExtractor;
 use App\Service\UserProvider;
 use App\Model\Validator\ValidatorFactory;
+use Exception;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class CreatePostController extends Controller
 {
@@ -71,6 +75,11 @@ class CreatePostController extends Controller
         echo $this->twig->render('post/create.html.twig', ['csrf_token' => $csrfToken]);
     }
 
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
     public function createPost(): void
     {
         $csrfCheck = 'createPost';
@@ -84,6 +93,8 @@ class CreatePostController extends Controller
             header('location: /login');
             return;
         }
+
+        $post = null;
 
         try {
             $token = $_POST['csrf_token'];
@@ -114,7 +125,7 @@ class CreatePostController extends Controller
                     'content' => $post->content,
                 ]
             ]);
-        } catch (\Exception|DatabaseException $e) {
+        } catch (Exception|DatabaseException $e) {
             $error = $e->getMessage();
             echo $this->twig->render('post/create.html.twig', [
                 'otherError' => $error,

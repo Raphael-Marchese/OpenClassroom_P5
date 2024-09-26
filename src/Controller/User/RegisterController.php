@@ -13,6 +13,7 @@ use App\Model\Repository\UserRepository;
 use App\Model\Validator\ValidatorFactory;
 use App\Service\FormSanitizer;
 use App\Service\UserExtractor;
+use Exception;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -50,7 +51,7 @@ class RegisterController extends Controller
 
     /**
      * @return void
-     * @throws \Exception
+     * @throws Exception
      */
     public function submitRegister(): void
     {
@@ -59,6 +60,8 @@ class RegisterController extends Controller
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
+
+        $user = null;
 
         try {
             $token = $_POST['csrf_token'];
@@ -71,7 +74,7 @@ class RegisterController extends Controller
             $this->repository->save($user);
 
             echo $this->twig->render('user/success.html.twig');
-        } catch (UserException | CSRFTokenException $e) {
+        } catch (UserException|CSRFTokenException $e) {
             echo $this->twig->render('user/register.html.twig', [
                 'errors' => $e->validationErrors,
                 'formData' => [
@@ -81,7 +84,7 @@ class RegisterController extends Controller
                     'email' => $user->email,
                 ]
             ]);
-        } catch (\Exception|DatabaseException $e) {
+        } catch (Exception|DatabaseException $e) {
             echo $this->twig->render('user/register.html.twig', [
                 'otherError' => $e->getMessage(),
                 'formData' => [

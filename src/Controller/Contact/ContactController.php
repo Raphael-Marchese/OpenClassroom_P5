@@ -10,11 +10,15 @@ use App\Model\Contact\Contact;
 use App\Model\Validator\ContactValidator;
 use App\Service\FormSanitizer;
 use Symfony\Component\Mailer\Exception\TransportException;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mime\Email;
 use App\Config;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 
 class ContactController extends Controller
@@ -40,11 +44,19 @@ class ContactController extends Controller
         echo $this->twig->render('contact/contact.html.twig');
     }
 
+    /**
+     * @throws TransportExceptionInterface
+     * @throws RuntimeError
+     * @throws LoaderError
+     * @throws SyntaxError
+     */
     public function submitContact(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
+
+        $contact = null;
 
         try {
             $sanitizedData = $this->formSanitizer->sanitize($_POST);

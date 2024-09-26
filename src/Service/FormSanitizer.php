@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use Exception;
+
 class FormSanitizer
 {
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function sanitize($data): array
     {

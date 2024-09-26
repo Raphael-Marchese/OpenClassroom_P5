@@ -5,6 +5,7 @@ namespace App\Model\Validator;
 
 use App\Model\Entity\BlogPost;
 use App\Exception\BlogPostException;
+use Override;
 
 /**
  * @param BlogPost $data
@@ -12,7 +13,7 @@ use App\Exception\BlogPostException;
  */
 class PostValidator implements ValidatorInterface
 {
-    #[\Override]
+    #[Override]
     public function validate($data): void
     {
         $errors = [];

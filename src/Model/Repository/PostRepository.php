@@ -155,10 +155,6 @@ class PostRepository extends Database
             throw new DatabaseException('le chargement a échoué');
         }
 
-        if ($result === false) {
-            return []; // Aucun résultat trouvé
-        }
-
         $posts = [];
 
         // Parcourir chaque résultat et créer un objet Comment

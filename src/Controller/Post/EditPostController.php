@@ -19,6 +19,11 @@ use App\Service\PostExtractor;
 use App\Service\UserProvider;
 use App\Model\Validator\ValidatorFactory;
 use App\Security\AuthorChecker;
+use DateTime;
+use Exception;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class EditPostController extends Controller
 {
@@ -74,6 +79,11 @@ class EditPostController extends Controller
         echo $this->twig->render('post/edit.html.twig', ['post' => $post, 'csrf_token' => $csrfToken]);
     }
 
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
     public function postEdit(int $id): void
     {
         $csrfCheck = 'editPost';
@@ -89,6 +99,8 @@ class EditPostController extends Controller
             return;
         }
 
+        $post = null;
+
         try {
             $token = $_POST['csrf_token'];
             $this->token->validateToken($token, $csrfCheck);
@@ -101,8 +113,8 @@ class EditPostController extends Controller
             ValidatorFactory::validate($image);
             ValidatorFactory::validate($post);
 
-            $post->updatedAt = new \DateTime();
-            $oldPost = $this->postRepository->findById((int)$id);
+            $post->updatedAt = new DateTime();
+            $oldPost = $this->postRepository->findById($id);
 
             if ($_FILES['image']['size'] === 0) {
                 $post->image = $oldPost?->image;
@@ -110,7 +122,7 @@ class EditPostController extends Controller
 
             $this->authorChecker->checkAuthor($post);
 
-            $this->postRepository->update($post, (int)$id);
+            $this->postRepository->update($post, $id);
 
             header(sprintf('Location: /post/%s', $id));
             ob_end_flush();
@@ -128,7 +140,7 @@ class EditPostController extends Controller
                     'content' => $post->content,
                 ]
             ]);
-        } catch (\Exception|DatabaseException $e) {
+        } catch (Exception|DatabaseException $e) {
             $error = $e->getMessage();
             echo $this->twig->render('post/edit.html.twig', [
                 'otherError' => $error,
