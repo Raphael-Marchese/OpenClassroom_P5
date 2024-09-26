@@ -14,6 +14,9 @@ use App\Model\Entity\Comment;
 class CommentValidator implements ValidatorInterface
 {
 
+    /**
+     * @throws CommentException
+     */
     public function validate($data): void
     {
         $errors = [];

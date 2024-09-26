@@ -7,12 +7,16 @@ namespace App\Controller\Comment;
 use App\Controller\Controller;
 use App\Exception\AccessDeniedException;
 use App\Exception\CommentNotFoundException;
+use App\Exception\DatabaseException;
 use App\Exception\UserNotFoundException;
 use App\Model\Repository\CommentRepository;
 use App\Model\Repository\PostRepository;
 use App\Security\AdminChecker;
 use App\Security\AuthorisationChecker;
 use App\Service\UserProvider;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class DeleteCommentController extends Controller
 {
@@ -34,6 +38,14 @@ class DeleteCommentController extends Controller
         $this->authorisationChecker = new AuthorisationChecker();
     }
 
+    /**
+     * @throws SyntaxError
+     * @throws UserNotFoundException
+     * @throws RuntimeError
+     * @throws LoaderError
+     * @throws DatabaseException
+     * @throws \DateMalformedStringException
+     */
     public function deleteComment($id): void
     {
         try {

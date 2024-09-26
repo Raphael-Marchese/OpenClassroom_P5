@@ -18,15 +18,16 @@ class PostExtractor
         $this->formSanitizer = new FormSanitizer();
     }
 
+    /**
+     * @throws \Exception
+     */
     public function extractBlogPost(User $user, array $postData, File $file): BlogPost
     {
-        $sanitizedData = $this->formSanitizer->sanitize($postData);
-
-        $title = $sanitizedData['title'] ?? null;
-        $chapo = $sanitizedData['chapo'] ?? null;
-        $content = $sanitizedData['content'] ?? null;
+        $title = $postData['title'] ?? null;
+        $chapo = $postData['chapo'] ?? null;
+        $content = $postData['content'] ?? null;
         $image = $file->name !== '' ? basename($file->name) : null;
-        $status = $sanitizedData['submitButton'] ?? null;
+        $status = $postData['submitButton'] ?? null;
         $createdAt = new DateTimeImmutable();
 
         return new BlogPost(

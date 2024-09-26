@@ -13,6 +13,9 @@ use Override;
  */
 class ImageValidator implements ValidatorInterface
 {
+    /**
+     * @throws ImageException
+     */
     #[Override]
     public function validate($data): void
     {

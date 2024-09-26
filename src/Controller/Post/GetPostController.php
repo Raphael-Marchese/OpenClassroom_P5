@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Post;
 
 use App\Controller\Controller;
+use App\Exception\DatabaseException;
 use App\Model\CSRFToken;
 use App\Model\Repository\CommentRepository;
 use App\Model\Repository\PostRepository;
@@ -34,6 +35,8 @@ class GetPostController extends Controller
      * @throws SyntaxError
      * @throws RuntimeError
      * @throws LoaderError
+     * @throws DatabaseException
+     * @throws \DateMalformedStringException
      */
     public function getCollection(): void
     {
@@ -49,6 +52,7 @@ class GetPostController extends Controller
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
+     * @throws \DateMalformedStringException
      */
     public function getPost(int $id): void
     {

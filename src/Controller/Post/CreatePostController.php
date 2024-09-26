@@ -52,6 +52,11 @@ class CreatePostController extends Controller
         $this->adminChecker = new AdminChecker();
     }
 
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
     public function createPostForm(): void
     {
         try {

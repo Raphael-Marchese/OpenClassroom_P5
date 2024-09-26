@@ -22,6 +22,9 @@ use App\Service\FormSanitizer;
 use App\Service\UserProvider;
 use DateTime;
 use Exception;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class EditCommentController extends Controller
 {
@@ -55,6 +58,13 @@ class EditCommentController extends Controller
         $this->adminChecker = new AdminChecker();
     }
 
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     * @throws UserNotFoundException
+     * @throws \DateMalformedStringException
+     */
     public function commentEditForm($id): void
     {
         $editedComment = $this->commentRepository->findById($id);
@@ -91,6 +101,12 @@ class EditCommentController extends Controller
         );
     }
 
+    /**
+     * @throws RuntimeError
+     * @throws LoaderError
+     * @throws SyntaxError
+     * @throws \DateMalformedStringException
+     */
     public function commentEdit(int $id): void
     {
         $csrfCheck = 'editPost';
@@ -169,6 +185,9 @@ class EditCommentController extends Controller
         }
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     */
     public function commentStatusEdit($id): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -204,18 +223,27 @@ class EditCommentController extends Controller
 
             ob_end_clean();
 
-            echo $this->twig->render(
-                'post/post.html.twig',
-                ['post' => $comment?->blogPost, 'comments' => $comments, 'errors' => $validationErrors,]
-            );
+            try {
+                echo $this->twig->render(
+                    'post/post.html.twig',
+                    ['post' => $comment?->blogPost, 'comments' => $comments, 'errors' => $validationErrors,]
+                );
+            } catch (LoaderError | RuntimeError | SyntaxError $e) {
+                echo $e->getMessage();
+            }
+
         } catch (Exception|DatabaseException $e) {
             $error = $e->getMessage();
             $comments = $this->commentRepository->findByPostId($comment?->blogPost->id);
 
-            echo $this->twig->render(
-                'post/post.html.twig',
-                ['post' => $comment?->blogPost, 'comments' => $comments, 'errors' => $error,]
-            );
+            try {
+                echo $this->twig->render(
+                    'post/post.html.twig',
+                    ['post' => $comment?->blogPost, 'comments' => $comments, 'errors' => $error,]
+                );
+            } catch (LoaderError | RuntimeError | SyntaxError $e) {
+                echo $e->getMessage();
+            }
         }
     }
 }

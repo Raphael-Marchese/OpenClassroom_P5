@@ -21,6 +21,9 @@ class CommentFactory
         $this->postRepository = new PostRepository();
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     */
     public function createComment(array $postData): Comment
     {
         $content = $postData['content'];

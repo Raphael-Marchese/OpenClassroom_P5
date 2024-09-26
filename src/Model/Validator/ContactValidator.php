@@ -11,6 +11,9 @@ use App\Model\Contact\Contact;
 class ContactValidator implements ValidatorInterface
 {
 
+    /**
+     * @throws ContactException
+     */
     public function validate($data): void
     {
         $errors = [];

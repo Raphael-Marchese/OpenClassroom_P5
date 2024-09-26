@@ -50,6 +50,7 @@ class CreateCommentController extends Controller
      * @throws RuntimeError
      * @throws LoaderError
      * @throws SyntaxError
+     * @throws \Exception
      */
     public function createComment(): void
     {
@@ -71,9 +72,13 @@ class CreateCommentController extends Controller
             $this->token->validateToken($token, $csrfCheck);
         } catch (CSRFTokenException $e) {
             $errors = $e->validationErrors;
-            $sanitizedData = $this->formSanitizer->sanitize($_POST);
-            $post = $this->postRepository->findById((int)$sanitizedData['post_id']);
-            echo $this->twig->render('post/post.html.twig', ['post' => $post, 'errors' => $errors]);
+            try {
+                $sanitizedData = $this->formSanitizer->sanitize($_POST);
+                $post = $this->postRepository->findById((int)$sanitizedData['post_id']);
+                echo $this->twig->render('post/post.html.twig', ['post' => $post, 'errors' => $errors]);
+            } catch (\Exception $e) {
+                echo $e->getMessage();
+            }
         }
 
         $post = null;
@@ -96,7 +101,7 @@ class CreateCommentController extends Controller
         } catch (CommentException $e) {
             $errors = $e->validationErrors;
             echo $this->twig->render('post/post.html.twig', ['post' => $post, 'errors' => $errors]);
-        } catch (DatabaseException $e) {
+        } catch (DatabaseException|\Exception $e) {
             $error = $e->getMessage();
             echo $this->twig->render('post/post.html.twig', ['post' => $post, 'error' => $error]);
         }

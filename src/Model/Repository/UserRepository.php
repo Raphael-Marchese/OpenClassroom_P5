@@ -13,6 +13,9 @@ use PDOStatement;
 
 class UserRepository extends Database
 {
+    /**
+     * @throws DatabaseException
+     */
     public function findAll(): bool|PDOStatement
     {
         $result = $this->connect()->query('SELECT * FROM user ORDER BY id ASC');
@@ -24,15 +27,18 @@ class UserRepository extends Database
         return $result;
     }
 
+    /**
+     * @throws DatabaseException
+     */
     public function save(User $user): bool
     {
         $query = 'INSERT INTO user (username, first_name, last_name, email, password, role) VALUES (:username, :firstName, :lastName, :email, :password, :role)';
         $statement = $this->connect()->prepare($query);
-        $statement->bindValue(':username', $user->username, type: PDO::PARAM_STR);
-        $statement->bindValue(':password', $user->password, type: PDO::PARAM_STR);
-        $statement->bindValue(':email', $user->email, type: PDO::PARAM_STR);
-        $statement->bindValue(':firstName', $user->firstName, type: PDO::PARAM_STR);
-        $statement->bindValue(':lastName', $user->lastName, type: PDO::PARAM_STR);
+        $statement->bindValue(':username', $user->username);
+        $statement->bindValue(':password', $user->password);
+        $statement->bindValue(':email', $user->email);
+        $statement->bindValue(':firstName', $user->firstName);
+        $statement->bindValue(':lastName', $user->lastName);
         $statement->bindValue(':role', 'ROLE_USER');
 
 
@@ -47,7 +53,7 @@ class UserRepository extends Database
     {
         $query = 'SELECT * FROM user WHERE email = :email';
         $statement = $this->connect()->prepare($query);
-        $statement->bindValue(':email', $email, PDO::PARAM_STR);
+        $statement->bindValue(':email', $email);
         $statement->execute();
 
         $result = $statement->fetch(PDO::FETCH_ASSOC);

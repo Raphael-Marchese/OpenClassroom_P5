@@ -14,6 +14,9 @@ use Override;
  */
 class UserValidator implements ValidatorInterface
 {
+    /**
+     * @throws UserException
+     */
     #[Override]
     public function validate($data): void
     {

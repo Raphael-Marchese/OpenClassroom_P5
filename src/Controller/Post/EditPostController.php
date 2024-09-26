@@ -53,6 +53,13 @@ class EditPostController extends Controller
         $this->token = new CSRFToken();
     }
 
+    /**
+     * @throws SyntaxError
+     * @throws UserNotFoundException
+     * @throws RuntimeError
+     * @throws LoaderError
+     * @throws \DateMalformedStringException
+     */
     public function postEditForm(int $id): void
     {
         $post = $this->postRepository->findById($id);

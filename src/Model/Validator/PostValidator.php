@@ -13,6 +13,9 @@ use Override;
  */
 class PostValidator implements ValidatorInterface
 {
+    /**
+     * @throws BlogPostException
+     */
     #[Override]
     public function validate($data): void
     {

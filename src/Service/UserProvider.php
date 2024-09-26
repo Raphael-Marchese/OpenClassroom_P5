@@ -16,6 +16,9 @@ class UserProvider
         $this->userRepository = new UserRepository();
     }
 
+    /**
+     * @throws UserNotFoundException
+     */
     public function getUser(): User
     {
         $userId = $_SESSION['LOGGED_USER']['user_id'] ?? null;

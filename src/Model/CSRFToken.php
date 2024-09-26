@@ -14,6 +14,9 @@ class CSRFToken extends Exception
         return hash('sha256', $stringToHash);
     }
 
+    /**
+     * @throws CSRFTokenException
+     */
     public function validateToken(string $token, string $stringToValidate): array
     {
         $errors = [];

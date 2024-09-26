@@ -39,6 +39,11 @@ class ContactController extends Controller
         $this->contactValidator = new ContactValidator();
     }
 
+    /**
+     * @throws RuntimeError
+     * @throws SyntaxError
+     * @throws LoaderError
+     */
     public function contact(): void
     {
         echo $this->twig->render('contact/contact.html.twig');
@@ -49,6 +54,7 @@ class ContactController extends Controller
      * @throws RuntimeError
      * @throws LoaderError
      * @throws SyntaxError
+     * @throws \Exception
      */
     public function submitContact(): void
     {
