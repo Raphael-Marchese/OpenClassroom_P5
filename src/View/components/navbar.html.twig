@@ -1,11 +1,11 @@
 {% block header %}
     <!-- Navigation-->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container px-5">
+        <div class="container-fluid px-5">
             {% if session %}
-                <a class="fs-3 ms-5 fw-bold navbar-brand" href="/" style="color: #6082BB">
+                <a class="fs-5 ms-auto ms-md-1 fw-bold navbar-brand" href="/" style="color: #6082BB">
                     Bonjour {{ session.username }}
-                    <img src="../../../public/assets/websiteUtils/phpNavbar.png" alt="logo php stylisé"
+                    <img  src="../../../public/assets/websiteUtils/phpNavbar.png" alt="logo php stylisé"
                          style="width: 100px; height: 50px; object-fit: contain;">
                 </a>
             {% else %}
