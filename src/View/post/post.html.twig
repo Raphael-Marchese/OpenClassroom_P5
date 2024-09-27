@@ -37,7 +37,7 @@
                                 {% else %}
                                     <div class="text-muted fst-italic mb-2">{{ post.created_at|format_datetime('full', 'short', locale='fr') }}</div>
                                 {% endif %}
-                                <div class="text-muted">{{ post.author.username }}</div>
+                                <div class="text-muted">{{ post.author.username|raw }}</div>
 
 
                             </header>
@@ -80,7 +80,7 @@
                                             <label for="edit-comment-content"></label>
                                             <textarea name="content" id="edit-comment-content" class="form-control"
                                                       rows="3"
-                                                      placeholder="Écrivez ici votre commentaire">{{ editedComment.content }}</textarea>
+                                                      placeholder="Écrivez ici votre commentaire">{{ editedComment.content|raw }}</textarea>
 
                                             <button class=" btn btn-warning btn-sm me-md-2">Modifier</button>
                                             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
@@ -97,6 +97,9 @@
                                             {% for comment in comments %}
                                                 {% if comment.status == 'pending' %}
                                                     {% if session.role == 'ROLE_ADMIN' %}
+                                                        <div class="ms-3 text-muted">
+                                                            {{ comment.content|raw }}
+                                                        </div>
                                                         <form action="/comment/{{ comment.id }}/status/edit"
                                                               method="POST" id="toggleCommentStatusForm">
                                                             <input type="hidden" name="post_id" value="{{ post.id }}">
@@ -122,10 +125,10 @@
                                                                                             style="width: 50px; height: 50px;"
                                                                                             src="../../../public/assets/websiteUtils/user.png"
                                                                                             alt="..."/></div>
-                                                            <div class="fw-bold ms-3 text-muted">{{ comment.author.username }}</div>
+                                                            <div class="fw-bold ms-3 text-muted">{{ comment.author.username|raw }}</div>
                                                         </div>
                                                         <div class="ms-3 text-muted">
-                                                            {{ comment.content }}
+                                                            {{ comment.content|raw }}
                                                         </div>
 
                                                         <div class="ms-3 text-info">
@@ -147,10 +150,10 @@
                                                                                         style="width: 50px; height: 50px;"
                                                                                         src="../../../public/assets/websiteUtils/user.png"
                                                                                         alt="..."/></div>
-                                                        <div class="fw-bold ms-3">{{ comment.author.username }}</div>
+                                                        <div class="fw-bold ms-3">{{ comment.author.username|raw }}</div>
                                                     </div>
                                                     <div class="ms-3">
-                                                        {{ comment.content }}
+                                                        {{ comment.content|raw }}
                                                     </div>
                                                     {% if session.user_id == comment.author.id or session.role == 'ROLE_ADMIN' %}
                                                         <div class="d-flex justify-content-end m-3">

@@ -133,4 +133,36 @@ class CommentRepository extends Database
 
         return true;
     }
+
+    /**
+     * @throws \DateMalformedStringException
+     */
+    public function findByStatus(string $status): array
+    {
+        $query = 'SELECT * FROM comment WHERE status = :status ORDER BY updated_at DESC';
+        $statement = $this->connect()->prepare($query);
+        $statement->bindValue(':status', $status, PDO::PARAM_STR);
+
+        $statement->execute();
+
+        $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+        // Vérifier s'il y a des résultats
+        if ($result === false) {
+            return []; // Aucun résultat trouvé
+        }
+
+        $comments = [];
+
+        // Parcourir chaque résultat et créer un objet Comment
+        foreach ($result as $commentData) {
+            $comment = $this->commentFactory->createComment($commentData);
+
+            $comment->id = $commentData['id'];
+
+            $comments[] = $comment;
+        }
+
+        return $comments;
+    }
 }
