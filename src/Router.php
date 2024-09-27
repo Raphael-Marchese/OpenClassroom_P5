@@ -13,6 +13,7 @@ use App\Controller\Post\EditPostController;
 use App\Controller\Post\GetPostController;
 use App\Controller\User\LoginController;
 use App\Controller\User\RegisterController;
+use ReflectionException;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -49,7 +50,6 @@ class Router
             '/comment/(\d+)/status/edit' => [EditCommentController::class, 'commentStatusEdit'],
             '/contact' => [ContactController::class, 'contact'],
             '/contact/submit' => [ContactController::class, 'submitContact'],
-            '/404' => Error404::class,
         ];
     }
 
@@ -57,29 +57,23 @@ class Router
      * @throws SyntaxError
      * @throws RuntimeError
      * @throws LoaderError
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function callController(string $path): void
     {
-        foreach ($this->routes as $route => $controller) {
+        foreach ($this->routes as $route => [$controllerClass, $method]) {
             if ($path === $route) {
-                $controllerClass = $controller[0];
-                $method = $controller[1];
                 $controllerInstance = new $controllerClass();
                 $controllerInstance->$method();
                 return;
             }
 
             if (preg_match('#^' . $route . '$#', $path, $matches)) {
-                $controllerClass = $controller[0];
-                $method = $controller[1];
                 $controllerInstance = new $controllerClass();
                 $pathId = (int)$matches[1];
                 $controllerInstance->$method($pathId);
                 return;
             }
         }
-        $error404Controller = new Error404();
-        $error404Controller->render();
     }
 }

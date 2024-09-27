@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Service\UserProvider;
+use Random\RandomException;
 use Twig\Environment;
 use Twig\Extension\DebugExtension;
 use Twig\Extra\Intl\IntlExtension;
@@ -14,6 +15,9 @@ abstract class Controller
 {
     protected Environment $twig;
 
+    /**
+     * @throws RandomException
+     */
     public function __construct()
     {
         $loader = new FilesystemLoader('src/View');

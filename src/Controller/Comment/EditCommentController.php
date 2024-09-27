@@ -20,6 +20,11 @@ use App\Security\AuthorChecker;
 use App\Service\CommentExtractor;
 use App\Service\FormSanitizer;
 use App\Service\UserProvider;
+use DateTime;
+use Exception;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class EditCommentController extends Controller
 {
@@ -53,6 +58,13 @@ class EditCommentController extends Controller
         $this->adminChecker = new AdminChecker();
     }
 
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     * @throws UserNotFoundException
+     * @throws \DateMalformedStringException
+     */
     public function commentEditForm($id): void
     {
         $editedComment = $this->commentRepository->findById($id);
@@ -89,6 +101,12 @@ class EditCommentController extends Controller
         );
     }
 
+    /**
+     * @throws RuntimeError
+     * @throws LoaderError
+     * @throws SyntaxError
+     * @throws \DateMalformedStringException
+     */
     public function commentEdit(int $id): void
     {
         $csrfCheck = 'editPost';
@@ -116,6 +134,8 @@ class EditCommentController extends Controller
             ]);
         }
 
+        $post = null;
+
         try {
             $sanitizedData = $this->sanitizer->sanitize($_POST);
 
@@ -134,7 +154,7 @@ class EditCommentController extends Controller
 
             ValidatorFactory::validate($comment);
 
-            $comment->updatedAt = new \DateTime();
+            $comment->updatedAt = new DateTime();
 
             $this->authorChecker->checkAuthor($comment);
 
@@ -154,7 +174,7 @@ class EditCommentController extends Controller
                 'post/post.html.twig',
                 ['post' => $post, 'comments' => $comments, 'csrf_token' => $token, 'errors' => $validationErrors,]
             );
-        } catch (\Exception|DatabaseException $e) {
+        } catch (Exception|DatabaseException $e) {
             $comments = $this->commentRepository->findByPostId($post->id);
 
             $error = $e->getMessage();
@@ -165,6 +185,9 @@ class EditCommentController extends Controller
         }
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     */
     public function commentStatusEdit($id): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -187,7 +210,7 @@ class EditCommentController extends Controller
             }
 
             $this->adminChecker->isAdmin($user);
-            $comment->updatedAt = new \DateTime();
+            $comment->updatedAt = new DateTime();
             $comment->status = 'published';
             $this->commentRepository->update($comment, (int)$id);
 
@@ -200,18 +223,27 @@ class EditCommentController extends Controller
 
             ob_end_clean();
 
-            echo $this->twig->render(
-                'post/post.html.twig',
-                ['post' => $comment?->blogPost, 'comments' => $comments, 'errors' => $validationErrors,]
-            );
-        } catch (\Exception|DatabaseException $e) {
+            try {
+                echo $this->twig->render(
+                    'post/post.html.twig',
+                    ['post' => $comment?->blogPost, 'comments' => $comments, 'errors' => $validationErrors,]
+                );
+            } catch (LoaderError | RuntimeError | SyntaxError $e) {
+                echo $e->getMessage();
+            }
+
+        } catch (Exception|DatabaseException $e) {
             $error = $e->getMessage();
             $comments = $this->commentRepository->findByPostId($comment?->blogPost->id);
 
-            echo $this->twig->render(
-                'post/post.html.twig',
-                ['post' => $comment?->blogPost, 'comments' => $comments, 'errors' => $error,]
-            );
+            try {
+                echo $this->twig->render(
+                    'post/post.html.twig',
+                    ['post' => $comment?->blogPost, 'comments' => $comments, 'errors' => $error,]
+                );
+            } catch (LoaderError | RuntimeError | SyntaxError $e) {
+                echo $e->getMessage();
+            }
         }
     }
 }

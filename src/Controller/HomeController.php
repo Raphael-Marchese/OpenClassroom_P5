@@ -23,6 +23,7 @@ class HomeController extends Controller
      * @throws RuntimeError
      * @throws LoaderError
      * @throws DatabaseException
+     * @throws \DateMalformedStringException
      */
     public function render(): void
     {

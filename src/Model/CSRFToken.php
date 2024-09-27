@@ -5,14 +5,18 @@ declare(strict_types=1);
 namespace App\Model;
 
 use App\Exception\CSRFTokenException;
+use Exception;
 
-class CSRFToken extends \Exception
+class CSRFToken extends Exception
 {
     public function generateToken(string $stringToHash): string
     {
         return hash('sha256', $stringToHash);
     }
 
+    /**
+     * @throws CSRFTokenException
+     */
     public function validateToken(string $token, string $stringToValidate): array
     {
         $errors = [];

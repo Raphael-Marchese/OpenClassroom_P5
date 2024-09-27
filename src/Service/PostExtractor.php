@@ -7,26 +7,22 @@ namespace App\Service;
 use App\Model\Entity\BlogPost;
 use App\Model\Entity\User;
 use App\Model\File\File;
+use DateTimeImmutable;
 
 class PostExtractor
 {
-    private FormSanitizer $formSanitizer;
 
-    public function __construct()
-    {
-        $this->formSanitizer = new FormSanitizer();
-    }
-
+    /**
+     * @throws \Exception
+     */
     public function extractBlogPost(User $user, array $postData, File $file): BlogPost
     {
-        $sanitizedData = $this->formSanitizer->sanitize($postData);
-
-        $title = $sanitizedData['title'] ?? null;
-        $chapo = $sanitizedData['chapo'] ?? null;
-        $content = $sanitizedData['content'] ?? null;
+        $title = $postData['title'] ?? null;
+        $chapo = $postData['chapo'] ?? null;
+        $content = $postData['content'] ?? null;
         $image = $file->name !== '' ? basename($file->name) : null;
-        $status = $sanitizedData['submitButton'] ?? null;
-        $createdAt = new \DateTimeImmutable();
+        $status = $postData['submitButton'] ?? null;
+        $createdAt = new DateTimeImmutable();
 
         return new BlogPost(
             title: $title,

@@ -31,6 +31,6 @@ CREATE TABLE `comment` (
 
 ALTER TABLE `blog_post` ADD FOREIGN KEY (`author`) REFERENCES `user` (`id`);
 
-ALTER TABLE `comment` ADD FOREIGN KEY (`author`) REFERENCES `user` (`id`);
+ALTER TABLE `comment` ADD FOREIGN KEY (`author`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE `comment` ADD CONSTRAINT comment_ibfk_2 FOREIGN KEY (`post`) REFERENCES `blog_post` (`id`) ON DELETE CASCADE;
+ALTER TABLE `comment` ADD CONSTRAINT comment_ibfk_2 FOREIGN KEY (`post`) REFERENCES `blog_post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;

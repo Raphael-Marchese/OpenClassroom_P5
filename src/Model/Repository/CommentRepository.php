@@ -20,6 +20,9 @@ class CommentRepository extends Database
         $this->commentFactory = new CommentFactory();
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     */
     public function findByPostId(int $postId): array
     {
         $query = 'SELECT * FROM comment WHERE post = :id ORDER BY updated_at DESC';
@@ -48,6 +51,9 @@ class CommentRepository extends Database
         return $comments;
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     */
     public function findById(int $id): ?Comment
     {
         $query = 'SELECT * FROM comment WHERE id = :id';
@@ -68,15 +74,18 @@ class CommentRepository extends Database
         return $comment;
     }
 
+    /**
+     * @throws DatabaseException
+     */
     public function create(Comment $comment): bool
     {
         $query = 'INSERT INTO comment (content, created_at, updated_at, status, author, post) VALUES (:content, :createdAt, :updatedAt, :status, :author, :blogPost)';
         $db = $this->connect();
         $statement = $db->prepare($query);
-        $statement->bindValue(':content', $comment->content, PDO::PARAM_STR);
-        $statement->bindValue(':createdAt', $comment->createdAt->format('Y-m-d H:i:s'), PDO::PARAM_STR);
-        $statement->bindValue(':updatedAt', $comment->updatedAt->format('Y-m-d H:i:s'), PDO::PARAM_STR);
-        $statement->bindValue(':status', $comment->status, PDO::PARAM_STR);
+        $statement->bindValue(':content', $comment->content);
+        $statement->bindValue(':createdAt', $comment->createdAt->format('Y-m-d H:i:s'));
+        $statement->bindValue(':updatedAt', $comment->updatedAt->format('Y-m-d H:i:s'));
+        $statement->bindValue(':status', $comment->status);
         $statement->bindValue(':author', $comment->author->id, PDO::PARAM_INT);
         $statement->bindValue(':blogPost', $comment->blogPost->id, PDO::PARAM_INT);
 
@@ -88,6 +97,9 @@ class CommentRepository extends Database
         return true;
     }
 
+    /**
+     * @throws DatabaseException
+     */
     public function delete(int $id): bool
     {
         $query = 'DELETE FROM comment WHERE id = :id';
@@ -102,15 +114,18 @@ class CommentRepository extends Database
         return true;
     }
 
+    /**
+     * @throws DatabaseException
+     */
     public function update(Comment $comment, int $id): bool
     {
         $query = 'UPDATE comment SET content = :content, updated_at = :updatedAt, content = :content, status = :status WHERE id = :id';
         $db = $this->connect();
         $statement = $db->prepare($query);
         $statement->bindValue(':id', $id, PDO::PARAM_INT);
-        $statement->bindValue(':content', $comment->content, type: PDO::PARAM_STR);
-        $statement->bindValue(':updatedAt', $comment->updatedAt->format('Y-m-d H:i:s'), PDO::PARAM_STR);
-        $statement->bindValue(':status', $comment->status, type: PDO::PARAM_STR);
+        $statement->bindValue(':content', $comment->content);
+        $statement->bindValue(':updatedAt', $comment->updatedAt->format('Y-m-d H:i:s'));
+        $statement->bindValue(':status', $comment->status);
 
         if (!$statement->execute()) {
             throw new DatabaseException('erreur BDD lors de la mise à jour du post');

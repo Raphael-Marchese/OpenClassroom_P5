@@ -6,6 +6,7 @@ namespace App\Controller\Post;
 
 use App\Controller\Controller;
 use App\Exception\AccessDeniedException;
+use App\Exception\DatabaseException;
 use App\Exception\UserNotFoundException;
 use App\Model\Repository\PostRepository;
 use App\Service\UserProvider;
@@ -34,6 +35,8 @@ class DeletePostController extends Controller
      * @throws SyntaxError
      * @throws RuntimeError
      * @throws LoaderError
+     * @throws DatabaseException
+     * @throws \DateMalformedStringException
      */
     public function deletePost($id): void
     {

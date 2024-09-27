@@ -18,6 +18,9 @@ class PostFactory
         $this->userRepository = new UserRepository();
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     */
     public function createBlogPost(array $postData): BlogPost
     {
         $title = $postData['title'] ?? null;

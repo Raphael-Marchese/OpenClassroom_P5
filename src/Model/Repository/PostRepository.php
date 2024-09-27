@@ -26,6 +26,7 @@ class PostRepository extends Database
      * Return all posts
      * @return bool|PDOStatement
      * @throws DatabaseException
+     * @throws \DateMalformedStringException
      */
     public function findAll(): array
     {
@@ -53,6 +54,7 @@ class PostRepository extends Database
      * Find one post by id
      * @param int $id
      * @return BlogPost|null
+     * @throws \DateMalformedStringException
      */
     public function findById(int $id): ?BlogPost
     {
@@ -84,14 +86,14 @@ class PostRepository extends Database
         $query = 'INSERT INTO blog_post (title, chapo, created_at, updated_at, content, status, author, image) VALUES (:title, :chapo, :createdAt, :updatedAt, :content, :status, :author, :image)';
         $db = $this->connect();
         $statement = $db->prepare($query);
-        $statement->bindValue(':title', $blogPost->title, type: PDO::PARAM_STR);
-        $statement->bindValue(':chapo', $blogPost->chapo, type: PDO::PARAM_STR);
-        $statement->bindValue(':createdAt', $blogPost->createdAt->format('Y-m-d H:i:s'), PDO::PARAM_STR);
-        $statement->bindValue(':updatedAt', $blogPost->updatedAt ? $blogPost->updatedAt->format('Y-m-d H:i:s') : $blogPost->createdAt->format('Y-m-d H:i:s'), PDO::PARAM_STR);
-        $statement->bindValue(':status', $blogPost->status, type: PDO::PARAM_STR);
-        $statement->bindValue(':content', $blogPost->content, type: PDO::PARAM_STR);
+        $statement->bindValue(':title', $blogPost->title);
+        $statement->bindValue(':chapo', $blogPost->chapo);
+        $statement->bindValue(':createdAt', $blogPost->createdAt->format('Y-m-d H:i:s'));
+        $statement->bindValue(':updatedAt', $blogPost->updatedAt ? $blogPost->updatedAt->format('Y-m-d H:i:s') : $blogPost->createdAt->format('Y-m-d H:i:s'));
+        $statement->bindValue(':status', $blogPost->status);
+        $statement->bindValue(':content', $blogPost->content);
         $statement->bindValue(':author', $blogPost->author->id, type: PDO::PARAM_INT);
-        $statement->bindValue(':image', $blogPost->image, type: PDO::PARAM_STR);
+        $statement->bindValue(':image', $blogPost->image);
 
         if (!$statement->execute()) {
             throw new DatabaseException('erreur BDD lors de la création du post');
@@ -107,6 +109,7 @@ class PostRepository extends Database
      * @param int $id
      * @return bool
      *
+     * @throws DatabaseException
      */
     public function update(BlogPost $blogPost, int $id): bool
     {
@@ -114,12 +117,12 @@ class PostRepository extends Database
         $db = $this->connect();
         $statement = $db->prepare($query);
         $statement->bindValue(':id', $id, PDO::PARAM_INT);
-        $statement->bindValue(':title', $blogPost->title, type: PDO::PARAM_STR);
-        $statement->bindValue(':chapo', $blogPost->chapo, type: PDO::PARAM_STR);
-        $statement->bindValue(':updatedAt', $blogPost->updatedAt->format('Y-m-d H:i:s'), PDO::PARAM_STR);
-        $statement->bindValue(':status', $blogPost->status, type: PDO::PARAM_STR);
-        $statement->bindValue(':content', $blogPost->content, type: PDO::PARAM_STR);
-        $statement->bindValue(':image', $blogPost->image, type: PDO::PARAM_STR);
+        $statement->bindValue(':title', $blogPost->title);
+        $statement->bindValue(':chapo', $blogPost->chapo);
+        $statement->bindValue(':updatedAt', $blogPost->updatedAt->format('Y-m-d H:i:s'));
+        $statement->bindValue(':status', $blogPost->status);
+        $statement->bindValue(':content', $blogPost->content);
+        $statement->bindValue(':image', $blogPost->image);
 
 
         if (!$statement->execute()) {
@@ -148,15 +151,15 @@ class PostRepository extends Database
         return true;
     }
 
+    /**
+     * @throws DatabaseException
+     * @throws \DateMalformedStringException
+     */
     public function findThreeLastPosts(): array
     {
         $result = $this->connect()->query('SELECT * FROM blog_post ORDER BY updated_at DESC LIMIT 3');
         if ($result === false) {
             throw new DatabaseException('le chargement a échoué');
-        }
-
-        if ($result === false) {
-            return []; // Aucun résultat trouvé
         }
 
         $posts = [];

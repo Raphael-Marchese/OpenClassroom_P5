@@ -8,6 +8,9 @@ use App\Exception\AccessDeniedException;
 
 class AdminChecker
 {
+    /**
+     * @throws AccessDeniedException
+     */
     public function isAdmin($data): void
     {
         $errors = [];

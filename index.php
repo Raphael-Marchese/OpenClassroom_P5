@@ -4,6 +4,10 @@
 
 namespace App;
 
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
+
 error_reporting(-1);
 
 // Same as error_reporting(E_ALL);
@@ -19,5 +23,9 @@ $path = $_SERVER['REQUEST_URI'];
 
 // Instanciation du routeur et traitement de la requête
 $router = new Router();
-$router->callController($path);
+try {
+    $router->callController($path);
+} catch (\ReflectionException | LoaderError | RuntimeError | SyntaxError $e) {
+    echo $e->getMessage();
+}
 

@@ -5,6 +5,7 @@ namespace App\Model\Validator;
 
 use App\Exception\ImageException;
 use App\Model\File\File;
+use Override;
 
 /**
  * @param File $data
@@ -12,7 +13,10 @@ use App\Model\File\File;
  */
 class ImageValidator implements ValidatorInterface
 {
-    #[\Override]
+    /**
+     * @throws ImageException
+     */
+    #[Override]
     public function validate($data): void
     {
         $errors = [];

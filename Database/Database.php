@@ -3,6 +3,7 @@
 namespace Database;
 
 use App\Config;
+use Exception;
 use PDO;
 
 
@@ -23,7 +24,7 @@ abstract class Database
             $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             return $db;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             die('Erreur : ' . $e->getMessage());
         }
     }

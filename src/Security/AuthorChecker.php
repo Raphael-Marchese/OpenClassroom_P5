@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Security;
 
 use App\Exception\AccessDeniedException;
+use App\Exception\UserNotFoundException;
 use App\Service\UserProvider;
 
 class AuthorChecker
@@ -14,6 +15,10 @@ class AuthorChecker
         $this->userProvider = new UserProvider();
     }
 
+    /**
+     * @throws UserNotFoundException
+     * @throws AccessDeniedException
+     */
     public function checkAuthor($data): void
     {
         $user = $this->userProvider->getUser();
