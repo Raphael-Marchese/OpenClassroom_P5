@@ -11,12 +11,6 @@ use DateTimeImmutable;
 
 class PostExtractor
 {
-    private FormSanitizer $formSanitizer;
-
-    public function __construct()
-    {
-        $this->formSanitizer = new FormSanitizer();
-    }
 
     /**
      * @throws \Exception
