@@ -1,3 +1,5 @@
+CREATE DATABASE IF NOT EXISTS professional_blog;
+
 CREATE TABLE `user` (
                         `id` integer AUTO_INCREMENT PRIMARY KEY,
                         `first_name` varchar(255),
@@ -16,6 +18,7 @@ CREATE TABLE `blog_post` (
                              `updated_at` dateTime,
                              `content` text,
                              `status` ENUM ('draft', 'pending', 'published'),
+                             `image` varchar(255),
                              `author` integer
 );
 
