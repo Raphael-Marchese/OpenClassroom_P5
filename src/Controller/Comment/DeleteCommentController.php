@@ -58,7 +58,7 @@ class DeleteCommentController extends Controller
         $comment = $this->commentRepository->findById($id);
 
         try {
-            if ($comment === null ) {
+            if ($comment === null) {
                 $validationErrors['comment'] = 'Commentaire non trouvé';
                 throw new CommentNotFoundException($validationErrors);
             }
