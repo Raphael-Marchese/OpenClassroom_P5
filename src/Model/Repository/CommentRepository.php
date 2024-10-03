@@ -141,7 +141,7 @@ class CommentRepository extends Database
     {
         $query = 'SELECT * FROM comment WHERE status = :status ORDER BY updated_at DESC';
         $statement = $this->connect()->prepare($query);
-        $statement->bindValue(':status', $status, PDO::PARAM_STR);
+        $statement->bindValue(':status', $status);
 
         $statement->execute();
 

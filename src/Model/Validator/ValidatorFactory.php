@@ -3,6 +3,11 @@ declare(strict_types=1);
 
 namespace App\Model\Validator;
 
+use App\Exception\BlogPostException;
+use App\Exception\CommentException;
+use App\Exception\ImageException;
+use App\Exception\UserException;
+
 class ValidatorFactory
 {
 
@@ -17,6 +22,9 @@ class ValidatorFactory
         ];
     }
 
+    /**
+     * @throws ImageException | UserException | BlogPostException | CommentException
+     */
     public static function validate(object $object): void
     {
         foreach (self::getValidators() as $validator) {

@@ -18,7 +18,7 @@ use Twig\Error\SyntaxError;
 
 class AdminController extends Controller
 {
-    private const PENDING_STATUS = 'pending';
+    private const string PENDING_STATUS = 'pending';
 
     private CommentRepository $commentRepository;
 
@@ -42,7 +42,7 @@ class AdminController extends Controller
     public function index(): void
     {
         try {
-            $user = $this->userProvider->getUser();
+            $this->userProvider->getUser();
         } catch (UserNotFoundException) {
             header('location: /login');
             return;
@@ -84,7 +84,7 @@ class AdminController extends Controller
             $this->adminChecker->isAdmin($user);
             $comment->updatedAt = new \DateTimeImmutable();
             $comment->status = 'published';
-            $this->commentRepository->update($comment, (int)$id);
+            $this->commentRepository->update($comment, $id);
 
             header('Location: /admin');
             ob_end_flush();
@@ -97,6 +97,10 @@ class AdminController extends Controller
         }
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     * @throws DatabaseException
+     */
     public function deleteComment(int $id): void
     {
         try {
