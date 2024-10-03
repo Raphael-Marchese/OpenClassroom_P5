@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Controller\Admin\AdminController;
 use App\Controller\Comment\CreateCommentController;
 use App\Controller\Comment\DeleteCommentController;
 use App\Controller\Comment\EditCommentController;
@@ -50,6 +51,9 @@ class Router
             '/comment/(\d+)/status/edit' => [EditCommentController::class, 'commentStatusEdit'],
             '/contact' => [ContactController::class, 'contact'],
             '/contact/submit' => [ContactController::class, 'submitContact'],
+            '/admin' => [AdminController::class, 'index'],
+            '/admin/comment/(\d+)/status/edit' => [AdminController::class, 'publishComment'],
+            '/admin/comment/(\d+)/delete' => [AdminController::class, 'deleteComment'],
         ];
     }
 

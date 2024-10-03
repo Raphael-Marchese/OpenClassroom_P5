@@ -71,7 +71,7 @@ class PostRepository extends Database
         }
 
         $blogPost = $this->postFactory->createBlogPost($result);
-        $blogPost->id = $result['id'];
+        $blogPost->id = $id;
 
         return $blogPost;
     }

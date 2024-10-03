@@ -1,0 +1,74 @@
+{% extends 'layout.html.twig' %}
+
+{% block body %}
+    {% if session.role == 'ROLE_ADMIN' %}
+        {% if not comments %}
+            <div class="d-flex justify-content-center align-items-center full-height">
+                <h1 class="text-secondary text-center">Il n'y a aucun commentaire en attente actuellement</h1>
+            </div>
+        {% endif %}
+
+        {% if comments %}
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th scope="col" class="text-center">Contenu</th>
+                        <th scope="col" class="text-center">Auteur</th>
+                        <th scope="col" class="text-center">Publier</th>
+                        <th scope="col" class="text-center">Post</th>
+                        <th scope="col" class="text-center">Supprimer</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for comment in comments %}
+                        {% if comment.status == 'pending' %}
+                            <tr>
+                                <!-- Colonne Contenu -->
+                                <td class="text-center">{{ comment.content|raw }}</td>
+
+                                <!-- Colonne Auteur -->
+                                <td class="text-center">{{ comment.author.username|raw }}</td>
+
+                                <!-- Colonne Publier (formulaire de publication du commentaire) -->
+                                <td class="text-center">
+                                    <form action="/admin/comment/{{ comment.id }}/status/edit"
+                                          method="POST" id="toggleCommentStatusForm">
+                                        <div class="d-flex justify-content-center align-items-center">
+                                            <div class="form-check form-switch">
+                                                <input
+                                                        class="form-check-input "
+                                                        type="checkbox"
+                                                        role="switch"
+                                                        id="flexSwitchCheckDefault"
+                                                        name="toggle"
+                                                        onchange="this.form.submit()"
+                                                >
+                                            </div>
+                                        </div>
+                                    </form>
+                                </td>
+
+                                <!-- Colonne Post (lien vers le post associé) -->
+                                <td class="text-center">
+                                    <a href="/post/{{ comment.blogPost.id }}">
+                                        <button class="btn btn-primary">Voir le post {{ comment.blogPost.id }}</button>
+                                    </a>
+                                </td>
+                                <td class="text-center">
+                                    <a href="/admin/comment/{{ comment.id }}/delete">
+                                        <img alt="icone de poubelle rouge"
+                                             src="../../../public/assets/websiteUtils/trash.png"
+                                             style="height: 50px; width: 50px;"/>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    {% endif %}
+
+{% endblock %}

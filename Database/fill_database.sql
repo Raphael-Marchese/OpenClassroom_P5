@@ -1,8 +1,9 @@
 -- Création des utilisateurs
 INSERT INTO `user` (`first_name`, `last_name`, `username`, `email`, `password`, `role`)
+    #plainPassword = test
 VALUES
-    ('Admin', 'Admin', 'admin', 'admin@example.com', 'mot_de_passe_admin', 'ROLE_ADMIN'),
-    ('Utilisateur', 'Normal', 'user', 'user@example.com', 'mot_de_passe_user', 'ROLE_USER');
+    ('Admin', 'Admin', 'admin', 'admin@example.com', '$2y$10$ZRmhB4oIQxlGjHZyHes14OpYZ3ZBLgDNvtGv90/zKModVsSRi2OFm', 'ROLE_ADMIN'),
+    ('Utilisateur', 'Normal', 'user', 'user@example.com', '$2y$10$ZRmhB4oIQxlGjHZyHes14OpYZ3ZBLgDNvtGv90/zKModVsSRi2OFm', 'ROLE_USER');
 
 -- Création des articles de blog
 INSERT INTO `blog_post` (`title`, `chapo`, `created_at`, `updated_at`, `content`, `status`, `author`)
