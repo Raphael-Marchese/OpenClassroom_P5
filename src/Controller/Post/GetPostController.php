@@ -60,6 +60,9 @@ class GetPostController extends Controller
         $comments = $this->commentRepository->findByPostId($id);
         $csrfToken = $this->token->generateToken('commentPost');
 
-        echo $this->twig->render('post/post.html.twig', ['post' => $post, 'comments' => $comments, 'csrf_token' => $csrfToken]);
+        echo $this->twig->render(
+            'post/post.html.twig',
+            ['post' => $post, 'comments' => $comments, 'csrf_token' => $csrfToken]
+        );
     }
 }

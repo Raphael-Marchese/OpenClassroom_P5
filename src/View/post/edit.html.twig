@@ -14,42 +14,58 @@
                     <div class="row gx-5 justify-content-center">
                         <div class="col-lg-8 col-xl-6">
 
-                            <form id="editPostForm" method="post" action="/post/{{ post.id }}/edit/submit" enctype="multipart/form-data">
+                            <form id="editPostForm" method="post" action="/post/{{ post.id }}/edit/submit"
+                                  enctype="multipart/form-data">
 
-                                <div class=" text-danger mb-3">{{errors.author}}</div>
+                                <div class=" text-danger mb-3">{{ errors.author }}</div>
 
-                                <div class=" text-danger mb-3">{{otherError}}</div>
+                                <div class=" text-danger mb-3">{{ otherError }}</div>
 
                                 <!-- Title input-->
                                 <div class="form-floating mb-3">
-                                    <input class="form-control" name="title" id="title" type="text" placeholder="Ecrivez ici votre titre..." value="{{ post.title|default('')|raw }}" data-sb-validations="required" />
+                                    <input class="form-control" name="title" id="title" type="text"
+                                           placeholder="Ecrivez ici votre titre..."
+                                           value="{{ post.title|default('')|raw }}" data-sb-validations="required"/>
                                     <label for="title">Titre</label>
-                                    <div class="invalid-feedback" data-sb-feedback="name:required">Le titre est obligatoire</div>
-                                    <div class=" text-danger mb-3">{{errors.title}}</div>
+                                    <div class="invalid-feedback" data-sb-feedback="name:required">Le titre est
+                                        obligatoire
+                                    </div>
+                                    <div class=" text-danger mb-3">{{ errors.title }}</div>
 
                                 </div>
                                 <!-- Chapo input-->
                                 <div class="form-floating mb-3">
-                                    <input class="form-control" id="chapo" name="chapo"  type="text" placeholder="le chapo est utile pour décrire ou résumer l'article" value="{{ post.chapo|default('')|raw }}" data-sb-validations="required,email" />
+                                    <input class="form-control" id="chapo" name="chapo" type="text"
+                                           placeholder="le chapo est utile pour décrire ou résumer l'article"
+                                           value="{{ post.chapo|default('')|raw }}"
+                                           data-sb-validations="required,email"/>
                                     <label for="chapo">Chapo</label>
-                                    <div class="invalid-feedback" data-sb-feedback="email:required">un chapo est obligatoire</div>
-                                    <div class=" text-danger mb-3">{{errors.chapo}}</div>
+                                    <div class="invalid-feedback" data-sb-feedback="email:required">un chapo est
+                                        obligatoire
+                                    </div>
+                                    <div class=" text-danger mb-3">{{ errors.chapo }}</div>
 
                                 </div>
                                 <!-- Image upload-->
                                 <div class="form-floating mb-3">
                                     <div>
-                                        <img src="/public/assets/images/{{ post.image }}" alt="Image actuelle" class="img-fluid mb-3" id="currentImage">
+                                        <img src="/public/assets/images/{{ post.image }}" alt="Image actuelle"
+                                             class="img-fluid mb-3" id="currentImage">
                                     </div>
-                                    <input class="form-control" type="file" value="{{ post.image }}" id="image" name="image" accept="image/png, image/jpeg" />
+                                    <input class="form-control" type="file" value="{{ post.image }}" id="image"
+                                           name="image" accept="image/png, image/jpeg"/>
                                     <label class="mb-2" for="image">Choisissez une photo d'illustration</label>
-                                    <div class=" text-danger mb-3">{{errors.image}}</div>
+                                    <div class=" text-danger mb-3">{{ errors.image }}</div>
                                 </div>
                                 <!-- Content input-->
                                 <div class="form-floating mb-3">
-                                    <textarea class="form-control" id="content" name="content" type="text" placeholder="Ajouter le contenu de l'article" style="height: 20rem" data-sb-validations="required">{{ post.content|default('')|raw }}</textarea>
+                                    <textarea class="form-control" id="content" name="content" type="text"
+                                              placeholder="Ajouter le contenu de l'article" style="height: 20rem"
+                                              data-sb-validations="required">{{ post.content|default('')|raw }}</textarea>
                                     <label for="content">Contenu</label>
-                                    <div class="invalid-feedback" data-sb-feedback="message:required">Un texte de contenu est nécessaire.</div>
+                                    <div class="invalid-feedback" data-sb-feedback="message:required">Un texte de
+                                        contenu est nécessaire.
+                                    </div>
                                     <div class="text-danger mb-3">{{ errors.content }}</div>
                                 </div>
 
@@ -60,7 +76,9 @@
 
                                 <!-- Submit Button-->
                                 <div class="d-grid">
-                                    <button class="btn btn-primary btn-lg " name="submitButton" id="publish" value="published" type="submit">Modifier</button>
+                                    <button class="btn btn-primary btn-lg " name="submitButton" id="publish"
+                                            value="published" type="submit">Modifier
+                                    </button>
                                 </div>
                                 <div class=" text-danger mb-3">{{ twigError }}</div>
                                 <div class=" text-danger mb-3">{{ errors.csrf_token }}</div>
@@ -75,12 +93,12 @@
 {% endblock %}
 
 {% block javascripts %}
-<script>
-    document.getElementById('image').addEventListener('change', function(event) {
-        const [file] = event.target.files;
-        if (file) {
-            document.getElementById('currentImage').src = URL.createObjectURL(file);
-        }
-    });
-</script>
+    <script>
+        document.getElementById('image').addEventListener('change', function (event) {
+            const [file] = event.target.files;
+            if (file) {
+                document.getElementById('currentImage').src = URL.createObjectURL(file);
+            }
+        });
+    </script>
 {% endblock %}

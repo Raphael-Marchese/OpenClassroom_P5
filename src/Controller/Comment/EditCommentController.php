@@ -228,10 +228,9 @@ class EditCommentController extends Controller
                     'post/post.html.twig',
                     ['post' => $comment?->blogPost, 'comments' => $comments, 'errors' => $validationErrors,]
                 );
-            } catch (LoaderError | RuntimeError | SyntaxError $e) {
+            } catch (LoaderError|RuntimeError|SyntaxError $e) {
                 echo $e->getMessage();
             }
-
         } catch (Exception|DatabaseException $e) {
             $error = $e->getMessage();
             $comments = $this->commentRepository->findByPostId($comment?->blogPost->id);
@@ -241,7 +240,7 @@ class EditCommentController extends Controller
                     'post/post.html.twig',
                     ['post' => $comment?->blogPost, 'comments' => $comments, 'errors' => $error,]
                 );
-            } catch (LoaderError | RuntimeError | SyntaxError $e) {
+            } catch (LoaderError|RuntimeError|SyntaxError $e) {
                 echo $e->getMessage();
             }
         }
