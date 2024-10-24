@@ -93,6 +93,6 @@ class LoginController extends Controller
         $this->twig->addGlobal('session', null);
         unset($_SESSION['LOGGED_USER']);
         session_destroy();
-        echo $this->twig->render('homepage/homepage.html.twig');
+        header('Location: /');
     }
 }
