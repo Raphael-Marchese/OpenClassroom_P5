@@ -49,8 +49,10 @@
                                 <!-- Image upload-->
                                 <div class="form-floating mb-3">
                                     <div>
+                                        {% if post.image %}
                                         <img src="/public/assets/images/{{ post.image }}" alt="Image actuelle"
                                              class="img-fluid mb-3" id="currentImage">
+                                        {% endif %}
                                     </div>
                                     <input class="form-control" type="file" value="{{ post.image }}" id="image"
                                            name="image" accept="image/png, image/jpeg"/>
