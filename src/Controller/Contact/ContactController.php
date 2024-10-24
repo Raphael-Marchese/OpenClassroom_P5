@@ -65,12 +65,11 @@ class ContactController extends Controller
         $contact = null;
 
         try {
-            $sanitizedData = $this->formSanitizer->sanitize($_POST);
-            $senderEmail = $sanitizedData["email"];
-            $firstName = $sanitizedData["firstName"];
-            $lastName = $sanitizedData["lastName"];
-            $message = $sanitizedData["message"];
-            $subject = $sanitizedData["subject"] ?: 'Demande de contact';
+            $senderEmail = $_POST["email"];
+            $firstName = $_POST["firstName"];
+            $lastName = $_POST["lastName"];
+            $message = $_POST["message"];
+            $subject = $_POST["subject"] ?: 'Demande de contact';
 
             $contact = new Contact(
                 email: $senderEmail,
